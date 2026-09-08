@@ -1,0 +1,162 @@
+
+'use client';
+
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { 
+  LayoutDashboard, Users, Building2, Briefcase, FileText, 
+  Settings, Search, LogOut, Home 
+} from 'lucide-react';
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  // Map routes to dynamic titles for the topbar header
+  const getPageTitle = (path: string) => {
+    if (path.includes('/users')) return 'Manage Users';
+    if (path.includes('/companies')) return 'Manage Companies';
+    if (path.includes('/internships')) return 'Manage Internships';
+    if (path.includes('/applications')) return 'Manage Applications';
+    if (path.includes('/system')) return 'System Panel';
+    return 'Dashboard Overview';
+  };
+
+  const navItems = [
+    { href: '/dashboard/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+    { href: '/dashboard/admin/users', label: 'Manage Users', icon: Users },
+    { href: '/dashboard/admin/companies', label: 'Manage Companies', icon: Building2 },
+    { href: '/dashboard/admin/internships', label: 'Manage Internships', icon: Briefcase },
+    { href: '/dashboard/admin/applications', label: 'Manage Applications', icon: FileText },
+    { href: '/dashboard/admin/system', label: 'System Panel', icon: Settings },
+  ];
+
+  return (
+    <div data-theme="light" className="min-h-screen flex bg-slate-50 text-slate-800 font-sans">
+      
+      {/* Toast Notification Container */}
+      {toastMessage && (
+        <div className="toast toast-end z-50">
+          <div className="alert alert-success text-white shadow-lg rounded-2xl">
+            <span>{toastMessage}</span>
+          </div>
+        </div>
+      )}
+
+      {/* COMMON SIDEBAR */}
+      <aside className="w-20 md:w-64 bg-white border-r border-slate-100 flex flex-col justify-between shadow-xs transition-all duration-300 shrink-0 sticky top-0 h-screen">
+        <div>
+          {/* Logo Brand Header */}
+          <div className="p-5 md:p-6 flex items-center space-x-3 mb-1 overflow-hidden">
+            <div className="w-9 h-9 shrink-0 rounded-xl bg-primary flex items-center justify-center text-white font-bold shadow-md shadow-primary/20">
+              IN
+            </div>
+            <div className="hidden md:block whitespace-nowrap">
+              <span className="text-lg font-extrabold tracking-tight block text-slate-900">
+                Intern<span className="text-primary">Nova</span>
+              </span>
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Admin Portal</span>
+            </div>
+          </div>
+
+          {/* Back to Home Action Button */}
+          <div className="px-3 md:px-4 mb-3">
+            <div className="tooltip tooltip-right md:tooltip-none w-full" data-tip="Back to Home">
+              <Link
+                href="/" 
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-xs text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all border border-slate-100/80"
+              >
+                <Home className="w-4 h-4 shrink-0 text-slate-400" />
+                <span className="hidden md:block whitespace-nowrap">Back to Home</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Navigation Links using Next.js Link */}
+          <nav className="space-y-1.5 px-3 md:px-4">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = item.exact 
+                ? pathname === item.href 
+                : pathname.startsWith(item.href);
+
+              return (
+                <div key={item.href} className="tooltip tooltip-right md:tooltip-none w-full" data-tip={item.label}>
+                  <Link
+                    href={item.href}
+                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl font-medium text-sm transition-all ${
+                      isActive 
+                        ? 'bg-sky-500 text-white font-semibold shadow-md shadow-sky-500/20' 
+                        : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 shrink-0" />
+                    <span className="hidden md:block whitespace-nowrap">{item.label}</span>
+                  </Link>
+                </div>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Bottom Logout Button */}
+        <div className="p-3 md:p-4">
+          <div className="tooltip tooltip-right md:tooltip-none w-full" data-tip="Logout">
+            <button 
+              onClick={() => triggerToast('Logged out securely.')} 
+              className="w-full flex items-center justify-center md:justify-start space-x-2 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition shadow-xs"
+            >
+              <LogOut className="w-5 h-5 shrink-0" />
+              <span className="hidden md:block whitespace-nowrap">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* MAIN LAYOUT WRAPPER */}
+      <div className="flex-grow flex flex-col h-screen overflow-y-auto">
+        
+        {/* COMMON TOP NAVBAR */}
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-100 py-3.5 px-8 flex justify-between items-center shadow-xs">
+          <div>
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">
+              {getPageTitle(pathname)}
+            </h2>
+          </div>
+
+          <div className="flex items-center space-x-6">
+            <div className="relative hidden sm:block">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Search analytics, users, companies..." 
+                className="input input-bordered input-sm pl-10 pr-4 rounded-xl w-80 md:w-96 bg-slate-50 border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none transition-all text-xs" 
+              />
+            </div>
+
+            <div className="flex items-center space-x-3 py-1 px-2 rounded-xl">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                AD
+              </div>
+              <div className="hidden lg:block text-left">
+                <p className="text-xs font-bold text-slate-800">Administrator</p>
+                <p className="text-[10px] text-slate-400">superadmin@internnova.com</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* DYNAMIC PAGE CONTENT CONTAINER */}
+        <main className="p-8 space-y-8 flex-grow">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
