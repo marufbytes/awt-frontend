@@ -52,3 +52,28 @@ export interface NewReferralPostForm {
   deadline: string;
   suggestedStudentIds: number[];
 }
+
+/** Where a student's application to one of the alumni's circulars currently stands. */
+export type ApplicationStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+
+/**
+ * A student applying to one of the alumni's APPROVED referral posts (circulars).
+ * This is what shows up under "Find Students" once a student applies — the alumni
+ * did not go looking for them, the student came in through the posted circular.
+ */
+export interface StudentApplication {
+  id: number;
+  studentId: number;
+  referralPostId: number;
+  status: ApplicationStatus;
+  /** ISO date string of when the student applied. */
+  appliedAt: string;
+  /** Note sent back to the student, e.g. once the vacancy is filled. */
+  responseMessage?: string | null;
+}
+
+/** A `StudentApplication` joined with the student and post it belongs to. */
+export interface StudentApplicationView extends StudentApplication {
+  student: UnplacedStudent;
+  post: ReferralPost;
+}

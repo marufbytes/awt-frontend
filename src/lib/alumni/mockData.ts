@@ -1,5 +1,9 @@
 // src/lib/alumni/mockData.ts
-import type { ReferralPost, UnplacedStudent } from '@/lib/alumni/types';
+import type {
+  ReferralPost,
+  StudentApplication,
+  UnplacedStudent,
+} from '@/lib/alumni/types';
 
 /** The alumni who is "logged in" for now. */
 export const MOCK_CURRENT_ALUMNI = {
@@ -128,5 +132,62 @@ export const MOCK_REFERRAL_POSTS: ReferralPost[] = [
     status: 'REJECTED',
     suggestedStudentIds: [103],
     createdAt: '2026-08-05',
+  },
+];
+
+/**
+ * Students who applied through one of the alumni's APPROVED circulars. Students
+ * can only apply once admin approves a post, so these all point at post id 1
+ * ("Junior Frontend Intern"), the only APPROVED post above.
+ */
+export const MOCK_STUDENT_APPLICATIONS: StudentApplication[] = [
+  {
+    id: 1001,
+    studentId: 103,
+    referralPostId: 1,
+    status: 'ACCEPTED',
+    appliedAt: '2026-09-05',
+    responseMessage: "You're in! We'll email you the next steps shortly.",
+  },
+  {
+    id: 1002,
+    studentId: 102,
+    referralPostId: 1,
+    status: 'REJECTED',
+    appliedAt: '2026-09-03',
+    responseMessage:
+      "Thanks for applying — we've decided to move forward with other candidates this round.",
+  },
+  {
+    id: 1003,
+    studentId: 101,
+    referralPostId: 1,
+    status: 'PENDING',
+    appliedAt: '2026-09-08',
+    responseMessage: null,
+  },
+  {
+    id: 1004,
+    studentId: 105,
+    referralPostId: 1,
+    status: 'PENDING',
+    appliedAt: '2026-09-09',
+    responseMessage: null,
+  },
+  {
+    id: 1005,
+    studentId: 106,
+    referralPostId: 1,
+    status: 'PENDING',
+    appliedAt: '2026-09-10',
+    responseMessage: null,
+  },
+  {
+    id: 1006,
+    studentId: 104,
+    referralPostId: 1,
+    status: 'PENDING',
+    appliedAt: '2026-09-11',
+    responseMessage: null,
   },
 ];
