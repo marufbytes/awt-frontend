@@ -1,10 +1,45 @@
 
 'use client';
 
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { login, ApiError } from '@/lib/auth/api';
+import { storeSession, dashboardPathForRole } from '@/lib/auth/session';
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
+  const router = useRouter();
+  const justRegistered = useSearchParams().get('registered') === '1';
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setIsSubmitting(true);
+
+    try {
+      const session = await login({ email, password });
+      storeSession(session);
+      router.push(dashboardPathForRole(session.user.role));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Top Bar */}
@@ -14,9 +49,9 @@ export default function LoginPage() {
         <Link href="/" className="flex items-center space-x-2">
         <div className="flex items-center space-x-3">
         <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center bg-blue-600">
-          <Image 
-            src="/logo.jpg" 
-            alt="UniCareer Connect Logo" 
+          <Image
+            src="/logo.jpg"
+            alt="UniCareer Connect Logo"
             fill
             className="object-cover"
           />
@@ -36,7 +71,7 @@ export default function LoginPage() {
       {/* Main Container */}
       <div className="flex-grow flex items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 grid grid-cols-1 md:grid-cols-2">
-          
+
           {/* Left */}
           <div className="p-8 md:p-12 flex flex-col justify-between">
             <div>
@@ -52,13 +87,28 @@ export default function LoginPage() {
 
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Log In to Your Account</h2>
 
+              {justRegistered && !error && (
+                <div className="mb-4 px-4 py-3 text-sm bg-green-50 border border-green-200 text-green-700 rounded-xl">
+                  Account created! Log in with your new credentials.
+                </div>
+              )}
+
+              {error && (
+                <div className="mb-4 px-4 py-3 text-sm bg-red-50 border border-red-200 text-red-700 rounded-xl">
+                  {error}
+                </div>
+              )}
+
               {/* Form */}
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Email Address</label>
-                  <input 
-                    type="email"  
-                    className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
 
@@ -69,18 +119,22 @@ export default function LoginPage() {
                       Forgot Password?
                     </a>
                   </div>
-                  <input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
 
-                <button 
-                  type="submit" 
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition mt-2"
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Log In
+                  {isSubmitting ? 'Logging In…' : 'Log In'}
                 </button>
               </form>
             </div>
@@ -88,7 +142,7 @@ export default function LoginPage() {
             {/* Bottom switch link */}
             <div className="text-center mt-8 text-sm text-gray-500">
               <p>
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/auth/register" className="text-blue-600 font-semibold hover:underline">
                   Sign Up
                 </Link>

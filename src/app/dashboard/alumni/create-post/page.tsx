@@ -7,11 +7,10 @@ import { Send, Info } from 'lucide-react';
 
 import { createReferralPost, getUnplacedStudents } from '@/lib/alumni/api';
 import type { NewReferralPostForm, UnplacedStudent } from '@/lib/alumni/types';
-import { MOCK_CURRENT_ALUMNI } from '@/lib/alumni/mockData';
 
 const EMPTY_FORM: NewReferralPostForm = {
   title: '',
-  companyName: MOCK_CURRENT_ALUMNI.companyName,
+  companyName: '',
   location: '',
   description: '',
   requiredSkills: '',
@@ -255,9 +254,7 @@ export default function CreateReferralPostPage() {
                   <p className="text-sm font-semibold text-slate-800">
                     {s.firstName} {s.lastName}
                   </p>
-                  <p className="text-xs text-slate-400">
-                    {s.department} · CGPA {s.cgpa.toFixed(2)}
-                  </p>
+                  <p className="text-xs text-slate-400">{s.email}</p>
                 </div>
                 <div className="flex flex-wrap gap-1 justify-end max-w-[40%]">
                   {s.skills.slice(0, 2).map((skill) => (

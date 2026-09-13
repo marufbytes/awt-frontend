@@ -1,11 +1,53 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { register, ApiError } from "@/lib/auth/api";
+import type { UserRole } from "@/lib/auth/types";
+
+/** The register form shows friendly category labels; the backend expects the UserRole enum. */
+const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
+  { value: "STUDENT", label: "Student" },
+  { value: "HR", label: "Company" },
+  { value: "ALUMNI", label: "Alumni" },
+];
 
 export default function RegisterPage() {
-  const [role, setRole] = useState("student");
+  const router = useRouter();
+  const [role, setRole] = useState<UserRole>("STUDENT");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    const [firstName, ...rest] = fullName.trim().split(/\s+/);
+    const lastName = rest.join(" ");
+    if (!firstName || !lastName) {
+      setError("Please enter both a first and last name.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await register({ firstName, lastName, email, password, role });
+      router.push("/auth/login?registered=1");
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.messages.join(" ")
+          : "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -63,8 +105,14 @@ export default function RegisterPage() {
                 Create an Account
               </h2>
 
+              {error && (
+                <div className="mb-4 px-4 py-3 text-sm bg-red-50 border border-red-200 text-red-700 rounded-xl">
+                  {error}
+                </div>
+              )}
+
               {/* Form */}
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">
                     Full Name
@@ -72,7 +120,10 @@ export default function RegisterPage() {
                   <input
                     type="text"
                     placeholder="Enter your full name"
-                    className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    className="w-full px-4 py-2.5 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
 
@@ -82,12 +133,14 @@ export default function RegisterPage() {
                   </label>
                   <select
                     value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                    onChange={(e) => setRole(e.target.value as UserRole)}
+                    className="w-full px-4 py-2.5 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   >
-                    <option value="student">Student</option>
-                    <option value="employer">Company</option>
-                    <option value="alumni">Alumni</option>
+                    {ROLE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -97,7 +150,10 @@ export default function RegisterPage() {
                   </label>
                   <input
                     type="email"
-                    className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-2.5 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
 
@@ -108,15 +164,23 @@ export default function RegisterPage() {
                   <input
                     type="password"
                     placeholder="••••••••"
-                    className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    className="w-full px-4 py-2.5 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
+                  <p className="mt-1 text-xs text-gray-400">
+                    At least 6 characters, with an uppercase and a lowercase letter.
+                  </p>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition mt-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Sign Up
+                  {isSubmitting ? "Signing Up…" : "Sign Up"}
                 </button>
               </form>
             </div>

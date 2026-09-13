@@ -138,7 +138,6 @@ export default function AlumniDashboardPage() {
           <thead>
             <tr className="bg-slate-50 text-slate-700 font-bold text-xs uppercase tracking-wider">
               <th>Student</th>
-              <th>Department</th>
               <th>Applied To</th>
               <th className="text-right">Status</th>
             </tr>
@@ -152,7 +151,6 @@ export default function AlumniDashboardPage() {
                   </div>
                   <div className="text-xs text-slate-400">{a.student.email}</div>
                 </td>
-                <td className="text-sm text-slate-600">{a.student.department}</td>
                 <td className="text-sm text-slate-600">{a.post.title}</td>
                 <td className="text-right">
                   <span

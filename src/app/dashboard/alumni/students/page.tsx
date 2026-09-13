@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 
 import {
-  ACCEPTED_APPLICATIONS_CAP,
   getStudentApplications,
+  isPostFull,
   respondToApplication,
   VACANCY_FULL_MESSAGE,
 } from '@/lib/alumni/api';
@@ -35,8 +35,6 @@ const STATUS_TABS: Array<'ALL' | ApplicationStatus> = [
   'REJECTED',
 ];
 
-const CGPA_OPTIONS = [0, 3, 3.3, 3.5, 3.8];
-
 export default function AlumniStudentsPage() {
   const [applications, setApplications] = useState<StudentApplicationView[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,8 +43,6 @@ export default function AlumniStudentsPage() {
   const [previewId, setPreviewId] = useState<number | null>(null);
 
   const [search, setSearch] = useState<string>('');
-  const [department, setDepartment] = useState<string>('All');
-  const [minCgpa, setMinCgpa] = useState<number>(0);
   const [skill, setSkill] = useState<string>('All');
   const [statusTab, setStatusTab] = useState<'ALL' | ApplicationStatus>('ALL');
 
@@ -63,20 +59,22 @@ export default function AlumniStudentsPage() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const acceptedCount = useMemo(
-    () => applications.filter((a) => a.status === 'ACCEPTED').length,
-    [applications],
-  );
-  const vacancyFull = acceptedCount >= ACCEPTED_APPLICATIONS_CAP;
+  // Each referral post has its own vacancy count, so "full" is per-post, not
+  // one global number — a post with 1 vacancy can be full while another with
+  // 5 still has room.
+  const postFullness = useMemo(() => {
+    const fullness: Record<number, boolean> = {};
+    for (const a of applications) {
+      fullness[a.referralPostId] ??= isPostFull(a.referralPostId, applications);
+    }
+    return fullness;
+  }, [applications]);
+
+  const anyPostFull = Object.values(postFullness).some(Boolean);
 
   // Looked up from the live list (rather than held as its own snapshot) so the
   // modal reflects the latest status right after an accept/reject.
   const previewApp = applications.find((a) => a.id === previewId) ?? null;
-
-  const departments = useMemo(
-    () => ['All', ...Array.from(new Set(applications.map((a) => a.student.department)))],
-    [applications],
-  );
 
   const skills = useMemo(
     () => [
@@ -98,16 +96,12 @@ export default function AlumniStudentsPage() {
         student.email.toLowerCase().includes(query) ||
         student.skills.some((s) => s.toLowerCase().includes(query));
 
-      const matchesDepartment = department === 'All' || student.department === department;
-      const matchesCgpa = student.cgpa >= minCgpa;
       const matchesSkill = skill === 'All' || student.skills.includes(skill);
       const matchesStatus = statusTab === 'ALL' || a.status === statusTab;
 
-      return (
-        matchesSearch && matchesDepartment && matchesCgpa && matchesSkill && matchesStatus
-      );
+      return matchesSearch && matchesSkill && matchesStatus;
     });
-  }, [applications, search, department, minCgpa, skill, statusTab]);
+  }, [applications, search, skill, statusTab]);
 
   const handleAccept = async (applicationId: number) => {
     setActingOnId(applicationId);
@@ -167,12 +161,12 @@ export default function AlumniStudentsPage() {
       )}
 
       {/* Vacancy full banner */}
-      {vacancyFull && (
+      {anyPostFull && (
         <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
           <p className="text-sm text-amber-800">
-            You have accepted {acceptedCount} students — vacancies are now full. New
-            applicants can only be sent the &quot;vacancy full&quot; message.
+            One or more of your referral posts have filled all their vacancies. New
+            applicants to those posts can only be sent the &quot;vacancy full&quot; message.
           </p>
         </div>
       )}
@@ -216,18 +210,6 @@ export default function AlumniStudentsPage() {
           </div>
 
           <select
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-            className="select select-bordered select-sm rounded-xl bg-slate-50"
-          >
-            {departments.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-
-          <select
             value={skill}
             onChange={(e) => setSkill(e.target.value)}
             className="select select-bordered select-sm rounded-xl bg-slate-50"
@@ -235,18 +217,6 @@ export default function AlumniStudentsPage() {
             {skills.map((s) => (
               <option key={s} value={s}>
                 {s === 'All' ? 'All skills' : s}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={minCgpa}
-            onChange={(e) => setMinCgpa(Number(e.target.value))}
-            className="select select-bordered select-sm rounded-xl bg-slate-50"
-          >
-            {CGPA_OPTIONS.map((c) => (
-              <option key={c} value={c}>
-                {c === 0 ? 'Any CGPA' : `CGPA ${c.toFixed(1)}+`}
               </option>
             ))}
           </select>
@@ -273,6 +243,7 @@ export default function AlumniStudentsPage() {
           {visibleApplications.map((a) => {
             const s = a.student;
             const isActing = actingOnId === a.id;
+            const vacancyFull = postFullness[a.referralPostId] ?? false;
 
             return (
               <div
@@ -289,16 +260,10 @@ export default function AlumniStudentsPage() {
                       <p className="font-bold text-slate-900 leading-tight">
                         {s.firstName} {s.lastName}
                       </p>
-                      <p className="text-xs text-slate-400">Batch of {s.graduationYear}</p>
+                      <p className="text-xs text-slate-400">{s.email}</p>
                     </div>
                   </div>
-                  <span className="badge badge-sm bg-sky-50 text-sky-600 border-none font-semibold">
-                    CGPA {s.cgpa.toFixed(2)}
-                  </span>
                 </div>
-
-                <p className="text-xs text-slate-500 mt-4">{s.department}</p>
-                <p className="text-xs text-slate-400">{s.email}</p>
 
                 <div className="flex flex-wrap gap-1.5 mt-4">
                   {s.skills.map((sk) => (
@@ -442,10 +407,7 @@ export default function AlumniStudentsPage() {
                   <h3 className="font-bold text-lg text-slate-900 leading-tight">
                     {previewApp.student.firstName} {previewApp.student.lastName}
                   </h3>
-                  <p className="text-xs text-slate-400">
-                    Batch of {previewApp.student.graduationYear} ·{' '}
-                    {previewApp.student.department}
-                  </p>
+                  <p className="text-xs text-slate-400">{previewApp.student.email}</p>
                 </div>
               </div>
               <button
@@ -463,14 +425,6 @@ export default function AlumniStudentsPage() {
                     Email
                   </p>
                   <p className="text-slate-700 mt-0.5">{previewApp.student.email}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    CGPA
-                  </p>
-                  <p className="text-slate-700 mt-0.5">
-                    {previewApp.student.cgpa.toFixed(2)}
-                  </p>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -538,7 +492,10 @@ export default function AlumniStudentsPage() {
               {previewApp.status === 'REJECTED' && (
                 <button
                   onClick={() => handleAccept(previewApp.id)}
-                  disabled={actingOnId === previewApp.id || vacancyFull}
+                  disabled={
+                    actingOnId === previewApp.id ||
+                    (postFullness[previewApp.referralPostId] ?? false)
+                  }
                   className="btn btn-sm w-full bg-emerald-500 hover:bg-emerald-600 text-white border-none rounded-xl gap-1.5 disabled:bg-slate-100 disabled:text-slate-400"
                 >
                   {actingOnId === previewApp.id ? (
@@ -550,34 +507,36 @@ export default function AlumniStudentsPage() {
                 </button>
               )}
 
-              {previewApp.status === 'PENDING' && !vacancyFull && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleAccept(previewApp.id)}
-                    disabled={actingOnId === previewApp.id}
-                    className="btn btn-sm flex-1 bg-emerald-500 hover:bg-emerald-600 text-white border-none rounded-xl gap-1.5"
-                  >
-                    <Check className="w-4 h-4" /> Accept
-                  </button>
-                  <button
-                    onClick={() => handleReject(previewApp.id)}
-                    disabled={actingOnId === previewApp.id}
-                    className="btn btn-sm flex-1 bg-red-50 hover:bg-red-100 text-red-600 border-none rounded-xl gap-1.5"
-                  >
-                    <X className="w-4 h-4" /> Reject
-                  </button>
-                </div>
-              )}
+              {previewApp.status === 'PENDING' &&
+                !(postFullness[previewApp.referralPostId] ?? false) && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleAccept(previewApp.id)}
+                      disabled={actingOnId === previewApp.id}
+                      className="btn btn-sm flex-1 bg-emerald-500 hover:bg-emerald-600 text-white border-none rounded-xl gap-1.5"
+                    >
+                      <Check className="w-4 h-4" /> Accept
+                    </button>
+                    <button
+                      onClick={() => handleReject(previewApp.id)}
+                      disabled={actingOnId === previewApp.id}
+                      className="btn btn-sm flex-1 bg-red-50 hover:bg-red-100 text-red-600 border-none rounded-xl gap-1.5"
+                    >
+                      <X className="w-4 h-4" /> Reject
+                    </button>
+                  </div>
+                )}
 
-              {previewApp.status === 'PENDING' && vacancyFull && (
-                <button
-                  onClick={() => handleSendVacancyFull(previewApp.id)}
-                  disabled={actingOnId === previewApp.id}
-                  className="btn btn-sm w-full bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl gap-1.5"
-                >
-                  <MailWarning className="w-4 h-4" /> Send &quot;Vacancy Full&quot; Message
-                </button>
-              )}
+              {previewApp.status === 'PENDING' &&
+                (postFullness[previewApp.referralPostId] ?? false) && (
+                  <button
+                    onClick={() => handleSendVacancyFull(previewApp.id)}
+                    disabled={actingOnId === previewApp.id}
+                    className="btn btn-sm w-full bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl gap-1.5"
+                  >
+                    <MailWarning className="w-4 h-4" /> Send &quot;Vacancy Full&quot; Message
+                  </button>
+                )}
             </div>
           </div>
         </div>

@@ -1,16 +1,17 @@
 // src/lib/alumni/types.ts
 
-/** A junior from the same university who has not landed an internship yet. */
+/**
+ * A junior from the same university who has not landed an internship yet.
+ * Mirrors what `GET /alumni/students/unplaced` actually returns — the backend
+ * has no `department`/`graduationYear`/`cgpa` columns, so those don't exist here.
+ */
 export interface UnplacedStudent {
   id: number;
   firstName: string;
   lastName: string;
   email: string;
-  department: string;
-  graduationYear: number;
-  cgpa: number;
   skills: string[];
-  /** How many internships this student has applied to so far. */
+  /** How many referral posts this student has applied to so far. */
   applicationCount: number;
   /** Link to an uploaded CV, or null when the student has not added one. */
   resumeUrl: string | null;

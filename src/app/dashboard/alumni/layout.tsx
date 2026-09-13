@@ -1,10 +1,10 @@
 // src/app/dashboard/alumni/layout.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -13,16 +13,44 @@ import {
   LogOut,
   Home,
 } from 'lucide-react';
-import { MOCK_CURRENT_ALUMNI } from '@/lib/alumni/mockData';
+import { clearSession, getSession } from '@/lib/auth/session';
+import type { AuthUser } from '@/lib/auth/types';
 
 export default function AlumniLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  // Only an ALUMNI with a valid session may see this dashboard. `getSession`
+  // reads localStorage, an external system unavailable during server
+  // rendering, so it has to happen post-mount — this is the sanctioned
+  // "subscribe to an external system on mount" use of an effect, not state
+  // derived from props/state that belongs in render.
+  useEffect(() => {
+    const session = getSession();
+    if (!session || session.user.role !== 'ALUMNI') {
+      router.replace('/auth/login');
+      return;
+    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser-only external store (localStorage) on mount, not state derived from render
+    setUser(session.user);
+  }, [router]);
 
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
+
+  const handleLogout = () => {
+    clearSession();
+    triggerToast('Logged out securely.');
+    router.replace('/auth/login');
+  };
+
+  if (!user) return null;
+
+  const initials = `${user.firstName[0] ?? ''}${user.lastName[0] ?? ''}`.toUpperCase();
 
   const getPageTitle = (path: string): string => {
     if (path.includes('/students')) return 'Students Seeking Internships';
@@ -103,7 +131,7 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
         {/* Logout */}
         <div className="p-3 md:p-4">
           <button
-            onClick={() => triggerToast('Logged out securely.')}
+            onClick={handleLogout}
             className="w-full flex items-center justify-center md:justify-start space-x-2 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition shadow-xs"
           >
             <LogOut className="w-5 h-5 shrink-0" />
@@ -122,13 +150,13 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
 
           <div className="flex items-center space-x-3 py-1 px-2 rounded-xl">
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-              {MOCK_CURRENT_ALUMNI.initials}
+              {initials}
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-xs font-bold text-slate-800">{MOCK_CURRENT_ALUMNI.name}</p>
-              <p className="text-[10px] text-slate-400">
-                {MOCK_CURRENT_ALUMNI.jobTitle} · {MOCK_CURRENT_ALUMNI.companyName}
+              <p className="text-xs font-bold text-slate-800">
+                {user.firstName} {user.lastName}
               </p>
+              <p className="text-[10px] text-slate-400">{user.email}</p>
             </div>
           </div>
         </header>
