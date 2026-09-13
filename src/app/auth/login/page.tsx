@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Footer from '@/components/common/Footer';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,6 +12,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Forgot password states
+  const [showForgot, setShowForgot] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+  const [resetErr, setResetErr] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,11 +29,9 @@ export default function LoginPage() {
     try {
       const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // কুটি/সেশন কুকি সেট করার জন্য আবশ্যিক
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -40,11 +47,39 @@ export default function LoginPage() {
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetErr(null);
+    setResetMsg(null);
+    setResetLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:3000/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: resetEmail, newPassword }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (response.ok) {
+        setResetMsg('Password updated successfully!');
+        setNewPassword('');
+        setResetEmail('');
+        setTimeout(() => setShowForgot(false), 2000);
+      } else {
+        setResetErr(data.message || 'Email not found or reset failed.');
+      }
+    } catch (err) {
+      setResetErr('Network error. Please try again.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 relative">
       {/* Top Bar */}
       <header className="w-full bg-white border-b border-gray-100 py-4 px-8 flex justify-between items-center">
-        {/* Logo with button */}
         <Link href="/" className="flex items-center space-x-2">
           <div className="flex items-center space-x-3">
             <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center bg-blue-600">
@@ -108,9 +143,13 @@ export default function LoginPage() {
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <label className="block text-xs font-semibold text-gray-600 uppercase">Password</label>
-                    <a href="#" className="text-xs font-medium text-blue-600 hover:underline">
+                    <button 
+                      type="button" 
+                      onClick={() => { setShowForgot(true); setResetErr(null); setResetMsg(null); }}
+                      className="text-xs font-medium text-blue-600 hover:underline cursor-pointer"
+                    >
                       Forgot Password?
-                    </a>
+                    </button>
                   </div>
                   <input 
                     type="password" 
@@ -159,11 +198,77 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="w-full py-4 px-8 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
-        <p>© 2026 UniCareer Connect</p>
-        <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
-      </footer>
+      {/* Forgot Password Modal */}
+      {showForgot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-gray-100">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Reset Password</h3>
+              <button 
+                type="button" 
+                onClick={() => setShowForgot(false)}
+                className="text-gray-400 hover:text-gray-600 text-sm font-semibold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {resetErr && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
+                {resetErr}
+              </div>
+            )}
+            {resetMsg && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-600 text-xs rounded-xl font-medium">
+                {resetMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  placeholder="name@example.com"
+                  className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">New Password</label>
+                <input 
+                  type="password" 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  placeholder="At least 8 characters"
+                  className="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button 
+                  type="button" 
+                  onClick={() => setShowForgot(false)}
+                  className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-xl transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={resetLoading}
+                  className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-semibold rounded-xl shadow-md transition cursor-pointer"
+                >
+                  {resetLoading ? 'Updating...' : 'Set New Pass'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <Footer></Footer>
     </div>
   );
 }
