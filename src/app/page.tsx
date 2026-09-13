@@ -8,10 +8,10 @@ import { faUserGraduate, faBuildingUser, faHandshake } from '@fortawesome/free-s
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Navbar */}
+
       <Navbar />
 
-      {/* Hero */}
+
       <section className="flex-grow max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
           <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
