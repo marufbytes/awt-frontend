@@ -1,32 +1,65 @@
-
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // কুটি/সেশন কুকি সেট করার জন্য আবশ্যিক
+      });
+
+      if (response.ok) {
+        router.push('/dashboard/admin');
+      } else {
+        const data = await response.json().catch(() => ({}));
+        setError(data.message || 'Login failed. Please check your credentials.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Top Bar */}
       <header className="w-full bg-white border-b border-gray-100 py-4 px-8 flex justify-between items-center">
-
         {/* Logo with button */}
         <Link href="/" className="flex items-center space-x-2">
-        <div className="flex items-center space-x-3">
-        <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center bg-blue-600">
-          <Image 
-            src="/logo.jpg" 
-            alt="UniCareer Connect Logo" 
-            fill
-            className="object-cover"
-          />
-        </div>
-        <span className="text-xl font-bold text-gray-900 leading-tight">
-          InternNova <span className="block text-xs font-normal text-gray-500">Connect</span>
-        </span>
-      </div>
-      </Link>
-
+          <div className="flex items-center space-x-3">
+            <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center bg-blue-600">
+              <Image 
+                src="/logo.jpg" 
+                alt="UniCareer Connect Logo" 
+                fill
+                className="object-cover"
+              />
+            </div>
+            <span className="text-xl font-bold text-gray-900 leading-tight">
+              InternNova <span className="block text-xs font-normal text-gray-500">Connect</span>
+            </span>
+          </div>
+        </Link>
 
         <Link href="/" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition">
           ← Back to Home
@@ -52,12 +85,22 @@ export default function LoginPage() {
 
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Log In to Your Account</h2>
 
+              {/* Error Message */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
+                  {error}
+                </div>
+              )}
+
               {/* Form */}
-              <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Email Address</label>
                   <input 
-                    type="email"  
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
                 </div>
@@ -71,6 +114,9 @@ export default function LoginPage() {
                   </div>
                   <input 
                     type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                     placeholder="••••••••" 
                     className="w-full px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 transition"
                   />
@@ -78,9 +124,10 @@ export default function LoginPage() {
 
                 <button 
                   type="submit" 
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition mt-2"
+                  disabled={loading}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold rounded-xl shadow-md transition mt-2 cursor-pointer"
                 >
-                  Log In
+                  {loading ? 'Logging in...' : 'Log In'}
                 </button>
               </form>
             </div>
