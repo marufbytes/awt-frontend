@@ -13,8 +13,10 @@ import {
   Building2,
   CheckCircle2,
   Clock,
-  XCircle
+  XCircle,
+
 } from 'lucide-react';
+import Link from 'next/link';
 
 // Type definitions for data models
 interface StudentProfile {
@@ -96,10 +98,10 @@ export default function StudentDashboard(): JSX.Element {
               <LayoutDashboard className="w-5 h-5" />
               <span>Dashboard</span>
             </a>
-            <a href="#jobs" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/student/internships" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Briefcase className="w-5 h-5" />
-              <span>Job Listings</span>
-            </a>
+              <span>Internships</span>
+            </Link>
             <a href="#resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <FileText className="w-5 h-5" />
               <span>My Resumes</span>
@@ -153,15 +155,21 @@ export default function StudentDashboard(): JSX.Element {
 
             {/* User Profile dropdown info */}
             <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
-              <img 
+                
+                <a  href="/student/profile">
+                 <img 
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
                 alt={student.name} 
                 className="w-10 h-10 rounded-full object-cover border-2 border-blue-600 shadow-sm"
               />
+                </a>
+             
+           
               <div className="hidden sm:block text-left">
                 <span className="block text-sm font-bold text-slate-900">{student.name}</span>
                 <span className="block text-xs text-slate-500">{student.major}</span>
               </div>
+              
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </div>
           </div>
