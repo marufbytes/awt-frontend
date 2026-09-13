@@ -1,8 +1,8 @@
-
 'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Users, Building2, Briefcase, FileText, 
@@ -18,7 +18,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Map routes to dynamic titles for the topbar header
   const getPageTitle = (path: string) => {
     if (path.includes('/users')) return 'Manage Users';
     if (path.includes('/companies')) return 'Manage Companies';
@@ -40,7 +39,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div data-theme="light" className="min-h-screen flex bg-slate-50 text-slate-800 font-sans">
       
-      {/* Toast Notification Container */}
       {toastMessage && (
         <div className="toast toast-end z-50">
           <div className="alert alert-success text-white shadow-lg rounded-2xl">
@@ -54,8 +52,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div>
           {/* Logo Brand Header */}
           <div className="p-5 md:p-6 flex items-center space-x-3 mb-1 overflow-hidden">
-            <div className="w-9 h-9 shrink-0 rounded-xl bg-primary flex items-center justify-center text-white font-bold shadow-md shadow-primary/20">
-              IN
+            <div className="w-9 h-9 shrink-0 rounded-xl bg-primary flex items-center justify-center text-white font-bold shadow-md shadow-primary/20 overflow-hidden">
+              <Image src="/logo.jpg" alt="Logo" width={36} height={36} className="w-full h-full object-cover" />
             </div>
             <div className="hidden md:block whitespace-nowrap">
               <span className="text-lg font-extrabold tracking-tight block text-slate-900">
@@ -66,16 +64,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Back to Home Action Button */}
-          <div className="px-3 md:px-4 mb-3">
-            <div className="tooltip tooltip-right md:tooltip-none w-full" data-tip="Back to Home">
-              <Link
-                href="/" 
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-xs text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all border border-slate-100/80"
-              >
-                <Home className="w-4 h-4 shrink-0 text-slate-400" />
-                <span className="hidden md:block whitespace-nowrap">Back to Home</span>
-              </Link>
-            </div>
+          <div className="px-3 md:px-4 mb-3 w-full">
+            <Link
+              href="/" 
+              data-tip="Back to Home"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-xs text-slate-500 hover:bg-slate-100/80 hover:text-slate-900 transition-all border border-slate-100/80 tooltip tooltip-right md:[&::before]:hidden md:[&::after]:hidden"
+            >
+              <Home className="w-4 h-4 shrink-0 text-slate-400" />
+              <span className="hidden md:block whitespace-nowrap">Back to Home</span>
+            </Link>
           </div>
 
           {/* Navigation Links using Next.js Link */}
@@ -87,10 +84,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 : pathname.startsWith(item.href);
 
               return (
-                <div key={item.href} className="tooltip tooltip-right md:tooltip-none w-full" data-tip={item.label}>
+                <div key={item.href} className="w-full">
                   <Link
                     href={item.href}
-                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl font-medium text-sm transition-all ${
+                    data-tip={item.label}
+                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl font-medium text-sm transition-all tooltip tooltip-right md:[&::before]:hidden md:[&::after]:hidden ${
                       isActive 
                         ? 'bg-sky-500 text-white font-semibold shadow-md shadow-sky-500/20' 
                         : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
@@ -106,16 +104,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Bottom Logout Button */}
-        <div className="p-3 md:p-4">
-          <div className="tooltip tooltip-right md:tooltip-none w-full" data-tip="Logout">
-            <button 
-              onClick={() => triggerToast('Logged out securely.')} 
-              className="w-full flex items-center justify-center md:justify-start space-x-2 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition shadow-xs"
-            >
-              <LogOut className="w-5 h-5 shrink-0" />
-              <span className="hidden md:block whitespace-nowrap">Logout</span>
-            </button>
-          </div>
+        <div className="p-3 md:p-4 w-full">
+          <button 
+            onClick={() => triggerToast('Logged out securely.')} 
+            data-tip="Logout"
+            className="w-full flex items-center justify-center md:justify-start space-x-2 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition shadow-xs tooltip tooltip-right md:[&::before]:hidden md:[&::after]:hidden"
+          >
+            <LogOut className="w-5 h-5 shrink-0" />
+            <span className="hidden md:block whitespace-nowrap">Logout</span>
+          </button>
         </div>
       </aside>
 
