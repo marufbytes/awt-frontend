@@ -18,8 +18,10 @@ import {
   ArrowRight, 
   X,
   ExternalLink,
-  DollarSign
+  DollarSign,
+  User
 } from 'lucide-react';
+import Link from 'next/link';
 
 interface Internship {
   id: number;
@@ -196,31 +198,32 @@ export default function InternshipBrowsing(): JSX.Element {
 
           {/* Nav Links */}
           <nav className="p-4 space-y-1.5">
-            <a  href="/student/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/student/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <LayoutDashboard className="w-5 h-5" />
               <span>Dashboard</span>
-            </a>
-            <a href="#jobs" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium transition-colors">
+            </Link>
+            <Link href="/student/internships" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium transition-colors">
               <Briefcase className="w-5 h-5" />
-              <span>Job Listings</span>
-            </a>
-            <a href="#resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+              <span>Internships</span>
+            </Link>
+            <Link href="/student/resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <FileText className="w-5 h-5" />
               <span>My Resumes</span>
               <span className="ml-auto bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-semibold">{student.totalResumes}</span>
-            </a>
-            <a href="#interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            </Link>
+            <Link href="/student/interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Calendar className="w-5 h-5" />
-              <span>Interviews</span>
-            </a>
-            <a href="#messages" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
-              <MessageSquare className="w-5 h-5" />
-              <span>Messages</span>
-            </a>
-            <a href="#settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Settings</span>
-            </a>
+              <span>My Interviews</span>
+            </Link>
+            <Link href="/student/applications" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+              <Briefcase className="w-5 h-5" />
+              <span>My Applications</span>
+            </Link>
+            <Link href="/student/profile" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+              <User className="w-5 h-5" />
+              <span>My Profile</span>
+            </Link>
+        
           </nav>
         </div>
 
@@ -242,7 +245,7 @@ export default function InternshipBrowsing(): JSX.Element {
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {/* Top Navbar Header */}
-        <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-10">
+        {/* <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between sticky top-0 z-10">
           <div>
             <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold">Portal / Internship Browsing</span>
           </div>
@@ -266,7 +269,7 @@ export default function InternshipBrowsing(): JSX.Element {
               <ChevronDown className="w-4 h-4 text-slate-400" />
             </div>
           </div>
-        </header>
+        </header> */}
 
         {/* Browsing Content Body */}
         <div className="p-8 space-y-8 max-w-7xl w-full mx-auto">

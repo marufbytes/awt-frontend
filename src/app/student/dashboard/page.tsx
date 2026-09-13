@@ -86,41 +86,38 @@ export default function StudentDashboard(): JSX.Element {
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-200">
               U
             </div>
-            <div>
+            <Link href='/'>
               <h1 className="font-bold text-slate-900 leading-tight">UniCareer</h1>
               <span className="text-xs text-blue-600 font-semibold tracking-wide">Connect</span>
-            </div>
+            </Link>
           </div>
 
           {/* Nav Links */}
           <nav className="p-4 space-y-1.5">
-            <a href="#dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium transition-colors">
+            <Link href="/student/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium transition-colors">
               <LayoutDashboard className="w-5 h-5" />
               <span>Dashboard</span>
-            </a>
+            </Link>
             <Link href="/student/internships" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Briefcase className="w-5 h-5" />
-              <span>Internships</span>
+              <span>Internships</span>  
             </Link>
-            <a href="#resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/student/resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <FileText className="w-5 h-5" />
-              <span>My Resumes</span>
+              <span>My Resume</span>
               <span className="ml-auto bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-semibold">{student.totalResumes}</span>
-            </a>
-            <a href="#interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            </Link>
+            <Link href="/student/interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Calendar className="w-5 h-5" />
-              <span>Interviews</span>
+              <span>My Interviews</span>
               <span className="ml-auto bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full font-semibold">{student.interviewsScheduled}</span>
-            </a>
-            <a href="#messages" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
-              <MessageSquare className="w-5 h-5" />
-              <span>Messages</span>
-            </a>
-            <a href="#settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Settings</span>
-            </a>
-          </nav>
+            </Link>
+            <Link href="/student/applications" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+               <Briefcase className="w-5 h-5" />
+              <span>My Applications</span>
+            </Link>
+            
+          </nav>   
         </div>
 
         {/* Sidebar Footer Profile Badge */}

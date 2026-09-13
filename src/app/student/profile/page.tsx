@@ -109,35 +109,28 @@ export default function StudentProfile(): JSX.Element {
 
           {/* Nav Links */}
           <nav className="p-4 space-y-1.5">
-            <Link    href="/student/dashboard"className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/student/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium transition-colors">
               <LayoutDashboard className="w-5 h-5" />
               <span>Dashboard</span>
             </Link>
-            <Link href="#job listing" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/student/internships" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Briefcase className="w-5 h-5" />
-              <span>Job Listings</span>
+              <span>Internships</span>  
             </Link>
-            <a href="#resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            <Link href="/student/resumes" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <FileText className="w-5 h-5" />
-              <span>My Resumes</span>
+              <span>My Resume</span>
               <span className="ml-auto bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-semibold">{student.totalResumes}</span>
-            </a>
-            <a href="#interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+            </Link>
+            <Link href="/student/interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Calendar className="w-5 h-5" />
-              <span>Interviews</span>
-            </a>
-            <a href="#messages" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
-              <MessageSquare className="w-5 h-5" />
-              <span>Messages</span>
-            </a>
-            <a href="#profile" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-50 text-blue-600 font-medium transition-colors">
-              <User className="w-5 h-5" />
-              <span>Profile</span>
-            </a>
-            <a href="#settings" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Settings</span>
-            </a>
+              <span>My Interviews</span>
+              <span className="ml-auto bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full font-semibold">{student.interviewsScheduled}</span>
+            </Link>
+            <Link href="/student/applications" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
+               <Briefcase className="w-5 h-5" />
+              <span>My Applications</span>
+            </Link>
           </nav>
         </div>
 
