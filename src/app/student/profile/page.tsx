@@ -45,7 +45,7 @@ export default function StudentProfile(): JSX.Element {
     address: "Bashundhara R/A, Dhaka, Bangladesh",
     major: "Software Engineering",
     university: "American International University-Bangladesh",
-    totalResumes: 3,
+    totalResumes: 2,
     totalApplications: 12,
     avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"
   });
@@ -102,7 +102,7 @@ export default function StudentProfile(): JSX.Element {
               U
             </div>
             <div>
-              <h1 className="font-bold text-slate-900 leading-tight">UniCareer</h1>
+              <h1 className="font-bold text-slate-900 leading-tight">Internnova</h1>
               <span className="text-xs text-blue-600 font-semibold tracking-wide">Connect</span>
             </div>
           </div>

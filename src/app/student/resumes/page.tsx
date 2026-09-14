@@ -88,7 +88,7 @@ export default function ResumeManagement(): React.JSX.Element {
               U
             </div>
             <div>
-              <h1 className="font-bold text-slate-900 leading-tight">UniCareer</h1>
+              <h1 className="font-bold text-slate-900 leading-tight">Internnova</h1>
               <span className="text-xs text-blue-600 font-semibold tracking-wide">Connect</span>
             </div>
           </div>
@@ -156,12 +156,13 @@ export default function ResumeManagement(): React.JSX.Element {
             </div>
             
             <div className="flex items-center gap-3 z-10">
-              <button 
-                onClick={() => setIsCreateModalOpen(true)}
+              
+              <a href='https://resumebuild.com/app/introduction' target='_blank'
+                // onClick={() => setIsCreateModalOpen(true)}
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/20 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold backdrop-blur-md transition-all"
               >
                 <Plus className="w-4 h-4 text-blue-300" /> Create Resume
-              </button>
+              </a>
               <button 
                 onClick={() => setIsUploadModalOpen(true)}
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-md shadow-blue-600/35 transition-all"

@@ -55,11 +55,11 @@ export default function StudentDashboard(): JSX.Element {
     name: "Zayed",
     id: "23-51421-1",
     major: "Software Engineering",
-    totalResumes: 3,
+    totalResumes: 2,
     totalApplications: 12,
     activeApplications: 5,
     pendingReview: 3,
-    interviewsScheduled: 2,
+  
     newRecommendations: 7,
   };
 
@@ -86,8 +86,8 @@ export default function StudentDashboard(): JSX.Element {
             <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-200">
               U
             </div>
-            <Link href='/'>
-              <h1 className="font-bold text-slate-900 leading-tight">UniCareer</h1>
+            <Link href={`/`}>
+              <h1 className="font-bold text-slate-900 leading-tight">Internnova</h1>
               <span className="text-xs text-blue-600 font-semibold tracking-wide">Connect</span>
             </Link>
           </div>
@@ -110,7 +110,7 @@ export default function StudentDashboard(): JSX.Element {
             <Link href="/student/interviews" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
               <Calendar className="w-5 h-5" />
               <span>My Interviews</span>
-              <span className="ml-auto bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full font-semibold">{student.interviewsScheduled}</span>
+              <span className="ml-auto bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded-full font-semibold"></span>
             </Link>
             <Link href="/student/applications" className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium transition-colors">
                <Briefcase className="w-5 h-5" />

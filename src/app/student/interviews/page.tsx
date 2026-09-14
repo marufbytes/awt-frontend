@@ -74,7 +74,7 @@ export default function InternshipApplication(): React.JSX.Element {
               U
             </div>
             <div>
-              <h1 className="font-bold text-slate-900 leading-tight">UniCareer</h1>
+              <h1 className="font-bold text-slate-900 leading-tight">Internnova</h1>
               <span className="text-xs text-blue-600 font-semibold tracking-wide">Connect</span>
             </div>
           </div>
