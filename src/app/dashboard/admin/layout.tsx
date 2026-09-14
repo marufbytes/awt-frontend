@@ -1,21 +1,10 @@
-// src/app/dashboard/admin/layout.tsx
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  LayoutDashboard,
-  Users,
-  Building2,
-  Briefcase,
-  FileText,
-  Settings,
-  Search,
-  LogOut,
-  Home,
-} from "lucide-react";
+import { LayoutDashboard, Users, Building2, Briefcase, FileText, Settings, LogOut, Home } from "lucide-react";
 
 export default function AdminLayout({
   children,
@@ -24,12 +13,6 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const handleLogout = async () => {
     try {
@@ -40,7 +23,6 @@ export default function AdminLayout({
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      triggerToast("Logged out securely.");
       router.push("/");
     }
   };
@@ -82,30 +64,15 @@ export default function AdminLayout({
 
   return (
     <div
-      data-theme="light"
       className="min-h-screen flex bg-slate-50 text-slate-800 font-sans"
     >
-      {toastMessage && (
-        <div className="toast toast-end z-50">
-          <div className="alert alert-success text-white shadow-lg rounded-2xl">
-            <span>{toastMessage}</span>
-          </div>
-        </div>
-      )}
 
-      {/* COMMON SIDEBAR */}
       <aside className="w-20 md:w-64 bg-white border-r border-slate-100 flex flex-col justify-between shadow-xs transition-all duration-300 shrink-0 sticky top-0 h-screen">
         <div>
-          {/* Logo Brand Header */}
+
           <div className="p-5 md:p-6 flex items-center space-x-3 mb-1 overflow-hidden">
             <div className="w-9 h-9 shrink-0 rounded-xl bg-primary flex items-center justify-center text-white font-bold overflow-hidden">
-              <Image
-                src="/logo.jpg"
-                alt="Logo"
-                width={36}
-                height={36}
-                className="w-full h-full object-cover"
-              />
+              <Image src="/logo.jpg" alt="Logo" width={36} height={36} className="w-full h-full object-cover"/>
             </div>
 
             <div className="hidden md:block whitespace-nowrap">
@@ -118,7 +85,7 @@ export default function AdminLayout({
             </div>
           </div>
 
-          {/* Back to Home Action Button */}
+
           <div className="px-3 md:px-4 mb-3 w-full">
             <Link
               href="/"
@@ -132,7 +99,7 @@ export default function AdminLayout({
             </Link>
           </div>
 
-          {/* Navigation Links using Next.js Link */}
+
           <nav className="space-y-1.5 px-3 md:px-4">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -162,22 +129,21 @@ export default function AdminLayout({
           </nav>
         </div>
 
-        {/* Bottom Logout Button */}
+
         <div className="p-3 md:p-4 w-full">
           <button
             onClick={handleLogout}
             data-tip="Logout"
-            className="w-full flex items-center justify-center md:justify-start space-x-2 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition shadow-xs tooltip tooltip-right md:[&::before]:hidden md:[&::after]:hidden"
-          >
-            <LogOut className="w-5 h-5 shrink-0" />
+            className="w-full flex items-center justify-center md:justify-start space-x-2 py-2.5 px-3 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-medium transition shadow-xs tooltip tooltip-right md:[&::before]:hidden md:[&::after]:hidden">
+            <LogOut className="w-5 h-5" />
             <span className="hidden md:block whitespace-nowrap">Logout</span>
           </button>
         </div>
       </aside>
 
-      {/* MAIN LAYOUT WRAPPER */}
+
       <div className="flex-grow flex flex-col h-screen overflow-y-auto">
-        {/* COMMON TOP NAVBAR */}
+
         <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-100 py-3.5 px-8 flex justify-between items-center shadow-xs">
           <div>
             <h2 className="text-xl font-black text-slate-900 tracking-tight">
@@ -189,26 +155,21 @@ export default function AdminLayout({
             <div className="flex items-center space-x-3 py-1 px-2 rounded-xl">
               <div className="flex items-center space-x-3 py-1 px-2 rounded-xl">
                 <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 border border-slate-200">
-                  <Image
-                    src="/admin.avif"
-                    alt="Administrator"
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src="/admin.avif" alt="Administrator" fill className="object-cover"/>
                 </div>
               </div>
 
               <div className="hidden lg:block text-left">
-                <p className="text-xs font-bold text-slate-800">
-                  Administrator
-                </p>
+                <p className="text-xs font-bold text-slate-800"> Administrator  </p>
               </div>
             </div>
           </div>
         </header>
 
-        {/* DYNAMIC PAGE CONTENT CONTAINER */}
+
         <main className="p-8 space-y-8 flex-grow">{children}</main>
+
+        
       </div>
     </div>
   );

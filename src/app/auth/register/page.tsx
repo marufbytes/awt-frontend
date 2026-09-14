@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { z } from "zod";
+import Footer from "@/components/common/Footer";
 
 const regSchema = z.object({
   firstName: z.string().min(1, "First name required"),
@@ -53,7 +54,14 @@ export default function RegisterPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || "Registration failed");
+      
       setStatus({ loading: false, msg: "Account created successfully!" });
+      
+      setForm({
+        firstName: "", lastName: "", email: "", phone: "", password: "",
+        role: "STUDENT", companyName: "", industry: "",
+      });
+
     } catch (err: any) {
       setStatus({ loading: false, msg: err.message });
     }
@@ -166,10 +174,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      <footer className="w-full py-4 px-8 border-t border-gray-100 flex justify-between items-center text-xs text-gray-400">
-        <p>© 2026 UniCareer Connect</p>
-        <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
-      </footer>
+      <Footer></Footer>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Forgot password states
+
   const [showForgot, setShowForgot] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -38,7 +38,11 @@ export default function LoginPage() {
         router.push('/dashboard/admin');
       } else {
         const data = await response.json().catch(() => ({}));
-        setError(data.message || 'Login failed. Please check your credentials.');
+        if (data.message) {
+          setError(data.message);
+        } else {
+          setError('Login failed. Please check your credentials.');
+        }
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -67,7 +71,11 @@ export default function LoginPage() {
         setResetEmail('');
         setTimeout(() => setShowForgot(false), 2000);
       } else {
-        setResetErr(data.message || 'Email not found or reset failed.');
+        if (data.message) {
+          setResetErr(data.message);
+        } else {
+          setResetErr('Email not found or reset failed.');
+        }
       }
     } catch (err) {
       setResetErr('Network error. Please try again.');
@@ -76,9 +84,37 @@ export default function LoginPage() {
     }
   };
 
+
+  let errorBox = null;
+  if (error) {
+    errorBox = (
+      <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
+        {error}
+      </div>
+    );
+  }
+
+  let resetErrorBox = null;
+  if (resetErr) {
+    resetErrorBox = (
+      <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
+        {resetErr}
+      </div>
+    );
+  }
+
+  let resetSuccessBox = null;
+  if (resetMsg) {
+    resetSuccessBox = (
+      <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-600 text-xs rounded-xl font-medium">
+        {resetMsg}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 relative">
-      {/* Top Bar */}
+
       <header className="w-full bg-white border-b border-gray-100 py-4 px-8 flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-2">
           <div className="flex items-center space-x-3">
@@ -101,14 +137,14 @@ export default function LoginPage() {
         </Link>
       </header>
 
-      {/* Main Container */}
+
       <div className="flex-grow flex items-center justify-center p-4 md:p-8">
         <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 grid grid-cols-1 md:grid-cols-2">
           
-          {/* Left */}
+
           <div className="p-8 md:p-12 flex flex-col justify-between">
             <div>
-              {/* Tab Switcher */}
+
               <div className="flex bg-gray-100 p-1 rounded-xl mb-8">
                 <Link href="/auth/login" className="flex-1 py-2 text-center text-sm font-semibold bg-white text-blue-600 rounded-lg shadow-sm">
                   Log In
@@ -120,14 +156,10 @@ export default function LoginPage() {
 
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Log In to Your Account</h2>
 
-              {/* Error Message */}
-              {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
-                  {error}
-                </div>
-              )}
 
-              {/* Form */}
+              {errorBox}
+
+
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Email Address</label>
@@ -171,10 +203,10 @@ export default function LoginPage() {
               </form>
             </div>
 
-            {/* Bottom switch link */}
+
             <div className="text-center mt-8 text-sm text-gray-500">
               <p>
-                Don't have an account?{' '}
+                Don't have an account?
                 <Link href="/auth/register" className="text-blue-600 font-semibold hover:underline">
                   Sign Up
                 </Link>
@@ -182,7 +214,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Right Side: Brand Banner */}
+
           <div className="hidden md:flex flex-col justify-center items-center p-12 bg-gradient-to-br from-blue-400 to-blue-600 text-white text-center">
             <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-6 relative overflow-hidden">
               <Image src="/logo.jpg" alt="Logo" fill className="object-cover" />
@@ -198,9 +230,9 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
+
       {showForgot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-gray-100">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-gray-900">Reset Password</h3>
@@ -209,20 +241,12 @@ export default function LoginPage() {
                 onClick={() => setShowForgot(false)}
                 className="text-gray-400 hover:text-gray-600 text-sm font-semibold"
               >
-                ✕
+                X
               </button>
             </div>
 
-            {resetErr && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
-                {resetErr}
-              </div>
-            )}
-            {resetMsg && (
-              <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-600 text-xs rounded-xl font-medium">
-                {resetMsg}
-              </div>
-            )}
+            {resetErrorBox}
+            {resetSuccessBox}
 
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
@@ -268,7 +292,7 @@ export default function LoginPage() {
         </div>
       )}
 
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }
