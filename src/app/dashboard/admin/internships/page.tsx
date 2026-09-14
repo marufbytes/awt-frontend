@@ -7,9 +7,11 @@ export default function ManageInternshipsPage() {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
   const [selected, setSelected] = useState<any>(null);
 
+  
+
+  useEffect(() => { 
   const loadData = () => {
     setLoading(true);
     fetch('http://localhost:3000/internship', { credentials: 'include' })
@@ -21,7 +23,8 @@ export default function ManageInternshipsPage() {
       .catch(() => setLoading(false));
   };
 
-  useEffect(() => { loadData(); }, []);
+  loadData(); 
+}, []);
 
   const handleDelete = async (id: number, title: string) => {
     if (!confirm(`Delete "${title}"?`)) return;
@@ -30,15 +33,13 @@ export default function ManageInternshipsPage() {
   };
 
   const filtered = list.filter(item => {
-    const matchSearch = item.title?.toLowerCase().includes(search.toLowerCase()) ||
+    return item.title?.toLowerCase().includes(search.toLowerCase()) ||
       item.company?.name?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All' ? true : statusFilter === 'Active' ? item.isActive : !item.isActive;
-    return matchSearch && matchStatus;
   });
 
   return (
     <div className="space-y-6">
-      {/* Search & Filter */}
+
       <div className="flex gap-3 bg-white p-4 rounded-xl shadow-xs">
         <input
           type="text"
@@ -47,18 +48,9 @@ export default function ManageInternshipsPage() {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <select 
-          className="select select-bordered select-sm bg-slate-50" 
-          value={statusFilter} 
-          onChange={e => setStatusFilter(e.target.value)}
-        >
-          <option value="All">All Status</option>
-          <option value="Active">Active</option>
-          <option value="Closed">Closed</option>
-        </select>
       </div>
 
-      {/* Table */}
+
       <div className="bg-white rounded-xl shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-sm text-slate-500">Loading internships...</div>
@@ -68,25 +60,23 @@ export default function ManageInternshipsPage() {
               <tr className="bg-slate-50 text-slate-600 text-xs">
                 <th>Title</th>
                 <th>Company</th>
-                <th>Status</th>
                 <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={4} className="text-center py-6 text-slate-400">No data found</td></tr>
+                <tr><td colSpan={3} className="text-center py-6 text-slate-400">No data found</td></tr>
               ) : (
                 filtered.map(item => (
                   <tr key={item.id} className="hover:bg-slate-50/50">
-                    <td className="font-bold flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-sky-500" /> {item.title}
+
+                    <td className="font-bold">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-sky-500 shrink-0" />
+                        <span>{item.title}</span>
+                      </div>
                     </td>
                     <td>{item.company?.name || 'No Company'}</td>
-                    <td>
-                      <span className={`badge badge-sm font-semibold ${item.isActive ? 'badge-success text-white' : 'badge-warning text-white'}`}>
-                        {item.isActive ? 'Active' : 'Closed'}
-                      </span>
-                    </td>
                     <td className="text-right space-x-1">
                       <button onClick={() => setSelected(item)} className="btn btn-ghost btn-xs text-sky-600">
                         <Eye className="w-4 h-4" />
@@ -103,7 +93,7 @@ export default function ManageInternshipsPage() {
         )}
       </div>
 
-      {/* DaisyUI Modal */}
+
       <div className={`modal ${selected ? 'modal-open' : ''}`}>
         <div className="modal-box rounded-2xl space-y-4">
           <div className="flex justify-between items-center border-b pb-3">
