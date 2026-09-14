@@ -27,7 +27,6 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
       router.replace('/auth/login');
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(session.user);
   }, [router]);
 

@@ -1,4 +1,3 @@
-// src/app/dashboard/admin/internships/page.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -20,7 +19,7 @@ export default function ManageInternshipsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification Container */}
+      {}
       {toast && (
         <div className="toast toast-end z-50">
           <div className="alert alert-success text-white shadow-lg rounded-2xl">
@@ -29,7 +28,7 @@ export default function ManageInternshipsPage() {
         </div>
       )}
 
-      {/* Header filter actions */}
+      {}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm">
         <div className="flex gap-3 w-full sm:w-auto">
           <input 
@@ -47,7 +46,7 @@ export default function ManageInternshipsPage() {
         <span className="text-xs font-semibold text-slate-400">Total Listings: {internshipsData.length}</span>
       </div>
 
-      {/* Internships Table */}
+      {}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <table className="table table-zebra w-full">
           <thead>

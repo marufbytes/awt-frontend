@@ -1,4 +1,5 @@
-import { getSession } from '@/lib/auth/session';
+import axios from 'axios';
+import { http } from '@/lib/http';
 import type {
   ApplicationStatus,
   NewReferralPostForm,
@@ -7,8 +8,6 @@ import type {
   StudentApplicationView,
   UnplacedStudent,
 } from '@/lib/alumni/types';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
 export class ApiError extends Error {
   messages: string[];
@@ -20,32 +19,27 @@ export class ApiError extends Error {
   }
 }
 
-async function parseErrorMessages(response: Response): Promise<string[]> {
-  try {
-    const body = await response.json();
-    if (Array.isArray(body.message)) return body.message;
-    if (typeof body.message === 'string') return [body.message];
-  } catch {}
-  return [`Request failed with status ${response.status}`];
+function extractMessages(error: unknown): string[] {
+  if (axios.isAxiosError(error)) {
+    const body = error.response?.data;
+    if (Array.isArray(body?.message)) return body.message;
+    if (typeof body?.message === 'string') return [body.message];
+    if (error.response) return [`Request failed with status ${error.response.status}`];
+  }
+  return ['Network error. Please try again.'];
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const session = getSession();
-
-  const response = await fetch(`${API_URL}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(session ? { Authorization: `Bearer ${session.accessToken}` } : {}),
-      ...init.headers,
-    },
-  });
-
-  if (!response.ok) {
-    throw new ApiError(await parseErrorMessages(response));
+async function request<T>(path: string, init: { method?: string; body?: string } = {}): Promise<T> {
+  try {
+    const { data } = await http.request<T>({
+      url: path,
+      method: init.method ?? 'GET',
+      data: init.body ? JSON.parse(init.body) : undefined,
+    });
+    return data;
+  } catch (error) {
+    throw new ApiError(extractMessages(error));
   }
-
-  return response.json() as Promise<T>;
 }
 
 function toUiStatus<T extends string>(status: string): T {

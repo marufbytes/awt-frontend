@@ -1,4 +1,3 @@
-// src/app/dashboard/admin/companies/page.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -19,7 +18,7 @@ export default function ManageCompaniesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification Container */}
+      {}
       {toast && (
         <div className="toast toast-end z-50">
           <div className="alert alert-success text-white shadow-lg rounded-2xl">
@@ -28,7 +27,7 @@ export default function ManageCompaniesPage() {
         </div>
       )}
 
-      {/* Verification Queue Section */}
+      {}
       <div className="bg-amber-50/70 p-6 rounded-3xl shadow-xs space-y-4 border border-amber-100">
         <div className="flex items-center space-x-2 text-amber-800 font-bold">
           <ShieldAlert className="w-5 h-5 text-amber-600" />
@@ -54,7 +53,7 @@ export default function ManageCompaniesPage() {
         </div>
       </div>
 
-      {/* Main Directory Table Placeholder */}
+      {}
       <div className="bg-white p-6 rounded-2xl shadow-sm space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">

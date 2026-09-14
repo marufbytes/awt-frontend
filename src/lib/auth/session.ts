@@ -1,4 +1,3 @@
-// src/lib/auth/session.ts
 import type { AuthUser, LoginResponse, UserRole } from '@/lib/auth/types';
 
 const STORAGE_KEY = 'innc.auth';
@@ -9,7 +8,6 @@ interface StoredSession {
   refreshToken: string;
 }
 
-/** Persist a freshly logged-in session to localStorage. */
 export function storeSession(session: LoginResponse): void {
   if (typeof window === 'undefined') return;
   const toStore: StoredSession = {
@@ -20,7 +18,6 @@ export function storeSession(session: LoginResponse): void {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
 }
 
-/** Read back the current session, if the user is logged in on this browser. */
 export function getSession(): StoredSession | null {
   if (typeof window === 'undefined') return null;
   const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -32,16 +29,22 @@ export function getSession(): StoredSession | null {
   }
 }
 
+export function updateSessionCompany(company: { id: number; name: string }): void {
+  const session = getSession();
+  if (!session) return;
+  session.user = { ...session.user, company };
+  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+}
+
 export function clearSession(): void {
   if (typeof window === 'undefined') return;
   window.localStorage.removeItem(STORAGE_KEY);
 }
 
-/** Where a logged-in user should land after auth, based on their role. */
 export function dashboardPathForRole(role: UserRole): string {
   switch (role) {
     case 'STUDENT':
-      return '/dashboard/student';
+      return '/student/dashboard';
     case 'ALUMNI':
       return '/dashboard/alumni';
     case 'HR':

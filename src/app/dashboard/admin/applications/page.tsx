@@ -1,4 +1,3 @@
-// src/app/dashboard/admin/applications/page.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -20,7 +19,7 @@ export default function ManageApplicationsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification Container */}
+      {}
       {toast && (
         <div className="toast toast-end z-50">
           <div className="alert alert-success text-white shadow-lg rounded-2xl">
@@ -29,7 +28,7 @@ export default function ManageApplicationsPage() {
         </div>
       )}
 
-      {/* Filter bar */}
+      {}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm">
         <input 
           type="text" 
@@ -47,7 +46,7 @@ export default function ManageApplicationsPage() {
         </div>
       </div>
 
-      {/* Applications Table */}
+      {}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <table className="table table-zebra w-full">
           <thead>

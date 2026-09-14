@@ -12,10 +12,10 @@ import {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Navbar */}
+      {}
       <Navbar />
 
-      {/* Hero */}
+      {}
       <section className="flex-grow max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div>
           <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
@@ -44,7 +44,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Hero image section */}
+        {}
         <div className="relative w-full h-[350px] md:h-[420px] rounded-3xl overflow-hidden shadow-sm border border-blue-100/50">
           <Image
             src="/home_photo.jpg"
@@ -57,7 +57,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works & Features Section */}
+      {}
       <section
         id="features"
         className="bg-gray-50/50 py-16 border-t border-b border-gray-100 scroll-mt-20"
@@ -73,7 +73,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Card 1: For Students */}
+            {}
             <div
               id="students"
               className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col items-start hover:shadow-md transition scroll-mt-28"
@@ -93,7 +93,7 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Card 2: For Employers */}
+            {}
             <div
               id="employers"
               className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col items-start hover:shadow-md transition scroll-mt-28"
@@ -113,7 +113,7 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Card 3: For Alumni */}
+            {}
             <div
               id="alumni"
               className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm flex flex-col items-start hover:shadow-md transition scroll-mt-28"
@@ -136,7 +136,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trusted by Leading Companies */}
+      {}
       <section className="py-12 bg-white text-center">
         <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-8">
           Trusted by Leading Companies
@@ -150,7 +150,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+      {}
       <Footer />
     </div>
   );

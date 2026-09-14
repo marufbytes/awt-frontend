@@ -1,6 +1,4 @@
-// src/lib/auth/types.ts
 
-/** Mirrors the backend's UserRole enum (src/user/entities/user.entity.ts). */
 export type UserRole = 'STUDENT' | 'ALUMNI' | 'HR' | 'ADMIN';
 
 export interface AuthUser {
@@ -9,6 +7,7 @@ export interface AuthUser {
   role: UserRole;
   firstName: string;
   lastName: string;
+  company?: { id: number; name: string } | null;
 }
 
 export interface LoginPayload {

@@ -27,7 +27,7 @@ const statusBreakdownData = [
 export default function AdminDashboardHome() {
   return (
     <div className="space-y-8">
-      {/* Hero Banner */}
+      {}
       <div className="relative bg-gradient-to-r from-sky-600 via-sky-500 to-blue-600 p-8 rounded-3xl shadow-lg shadow-sky-500/10 text-white flex flex-col md:flex-row justify-between items-start md:items-center">
         <div className="space-y-2">
           <span className="px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-lg backdrop-blur-sm">
@@ -43,7 +43,7 @@ export default function AdminDashboardHome() {
         </button>
       </div>
 
-      {/* KPI Stat Cards */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
           { title: 'Total Students', value: '3,420', desc: '+12.4% from last month', accent: 'bg-sky-500' },
@@ -64,7 +64,7 @@ export default function AdminDashboardHome() {
         ))}
       </div>
 
-      {/* Recharts Visualizations Grid */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-center mb-6">
