@@ -1,7 +1,6 @@
-// src/app/dashboard/admin/users/page.tsx
 "use client";
 import { useState, useEffect } from "react";
-import { Trash2, UserPlus, Eye } from "lucide-react";
+import { Trash2, Eye } from "lucide-react";
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -10,20 +9,19 @@ export default function ManageUsersPage() {
   const [roleFilter, setRoleFilter] = useState("All Roles");
   const [selectedUser, setSelectedUser] = useState<any>(null);
 
+  useEffect(() => {
   const fetchUsers = () => {
     setLoading(true);
     fetch("http://localhost:3000/users", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
-        setUsers(Array.isArray(data) ? data : data.users || data.data || []);
+        setUsers(Array.isArray(data) ? data : data.users || []);
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      });
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  fetchUsers();
+}, []);
 
   const handleDelete = async (id: number, name: string) => {
     if (!confirm(`Delete user ${name}?`)) return;
@@ -47,7 +45,7 @@ export default function ManageUsersPage() {
 
   return (
     <div className="space-y-6">
-      {/* Top Filter & Actions */}
+
       <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-xs">
         <div className="flex gap-3">
           <input
@@ -64,14 +62,13 @@ export default function ManageUsersPage() {
           >
             <option value="All Roles">All Roles</option>
             <option value="STUDENT">STUDENT</option>
-            <option value="COMPANY">COMPANY</option>
             <option value="ALUMNI">ALUMNI</option>
             <option value="ADMIN">ADMIN</option>
           </select>
         </div>
       </div>
 
-      {/* Users Table */}
+
       <div className="bg-white rounded-xl shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-8 text-center text-sm text-slate-500">
@@ -81,7 +78,8 @@ export default function ManageUsersPage() {
           <table className="table w-full">
             <thead>
               <tr className="bg-slate-50 text-slate-600 text-xs">
-                <th>User Profile</th>
+                <th>Name</th>
+                <th>Email</th>
                 <th>Role</th>
                 <th className="text-right">Actions</th>
               </tr>
@@ -90,7 +88,7 @@ export default function ManageUsersPage() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="text-center py-6 text-slate-400">
+                  <td colSpan={4} className="text-center py-6 text-slate-400">
                     No users found
                   </td>
                 </tr>
@@ -101,26 +99,11 @@ export default function ManageUsersPage() {
                     "Unnamed";
                   return (
                     <tr key={u.id} className="hover:bg-slate-50/50">
-                      <td className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-9 h-9 bg-slate-200">
-                            <img
-                              src={
-                                u.profilePictureUrl ||
-                                `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(fullName)}`
-                              }
-                              alt={fullName}
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold text-slate-900 text-sm">
-                            {fullName}
-                          </div>
-                          <div className="text-xs text-slate-400">
-                            {u.email}
-                          </div>
-                        </div>
+                      <td className="font-bold text-slate-900 text-sm">
+                        {fullName}
+                      </td>
+                      <td className="text-sm text-slate-600">
+                        {u.email}
                       </td>
                       <td>
                         <span
@@ -128,12 +111,12 @@ export default function ManageUsersPage() {
                             u.role === "ADMIN"
                               ? "badge-error text-white"
                               : u.role === "STUDENT"
-                                ? "badge-primary text-white"
-                                : u.role === "ALUMNI"
-                                  ? "badge-success text-white"
-                                  : u.role === "HR"
-                                    ? "badge-info text-white"
-                                    : "badge-ghost"
+                              ? "badge-primary text-white"
+                              : u.role === "ALUMNI"
+                              ? "badge-success text-white"
+                              : u.role === "HR"
+                              ? "badge-info text-white"
+                              : "badge-ghost"
                           }`}
                         >
                           {u.role}
@@ -162,13 +145,14 @@ export default function ManageUsersPage() {
         )}
       </div>
 
-      {/* DaisyUI View Details Modal */}
+
       <div className={`modal ${selectedUser ? "modal-open" : ""}`}>
         <div className="modal-box rounded-2xl space-y-4 max-w-md">
           <div className="flex justify-between items-center border-b pb-3">
             <h3 className="font-extrabold text-lg text-slate-900">
-              {`${selectedUser?.firstName || ""} ${selectedUser?.lastName || ""}`.trim() ||
-                `User #${selectedUser?.id}`}
+              {`${selectedUser?.firstName || ""} ${
+                selectedUser?.lastName || ""
+              }`.trim() || `User #${selectedUser?.id}`}
             </h3>
             <button
               onClick={() => setSelectedUser(null)}
