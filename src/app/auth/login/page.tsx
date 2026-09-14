@@ -24,11 +24,30 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include', // কুটি/সেশন কুকি সেট করার জন্য আবশ্যিক
+        credentials: 'include',
       });
 
       if (response.ok) {
-        router.push('/dashboard/admin');
+        const data = await response.json().catch(() => ({}));
+        const role = data.role || data.user?.role;
+
+        switch (role?.toUpperCase()) {
+          case 'STUDENT':
+            router.push('/dashboard/student');
+            break;
+          case 'ALUMNI':
+            router.push('/dashboard/alumni');
+            break;
+          case 'HR':
+            router.push('/dashboard/HR');
+            break;
+          case 'ADMIN':
+            router.push('/dashboard/admin');
+            break;
+          default:
+            router.push('/dashboard/HR');
+            break;
+        }
       } else {
         const data = await response.json().catch(() => ({}));
         setError(data.message || 'Login failed. Please check your credentials.');
