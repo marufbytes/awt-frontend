@@ -3,26 +3,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import {
-  Briefcase,
-  FileText,
-  Clock,
-  CheckCircle2,
-  ChevronRight,
-} from "lucide-react";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import {Briefcase,FileText,Clock,CheckCircle2,ChevronRight,} from "lucide-react";
+import {ResponsiveContainer,LineChart,Line,BarChart,Bar,PieChart,Pie,XAxis,YAxis,Tooltip, Cell,} from "recharts";
 
 import ApplicationsTable, { Application } from "@/components/ApplicationsTable";
 
@@ -251,7 +233,7 @@ export default function DashboardPage() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineChartData}>
                 <XAxis dataKey="day" stroke="#94A3B8" fontSize={11} tickLine={false} />
-                <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} allowDecimals={false} axisLine={false} ticks={[0, 2, 4, 6, 8, 10]}  />
+                <YAxis stroke="#94A3B8" fontSize={11} tickLine={false} allowDecimals={false} axisLine={false} ticks={[0, 2, 4, 6, 8, 10]} />
                 <Tooltip />
                 <Line type="monotone" dataKey="apps" stroke="#2563EB" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
               </LineChart>

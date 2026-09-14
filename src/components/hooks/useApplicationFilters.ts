@@ -31,7 +31,6 @@ export function useApplicationFilters({
     setSelectedStatus(initialStatus);
   }, [initialStatus]);
 
-  // Query Parameters আপডেট করার মূল ফাংশন
   const updateQueryParams = useCallback(
     (newParams: { page?: number; search?: string; status?: string }) => {
       const params = new URLSearchParams(
@@ -71,9 +70,7 @@ export function useApplicationFilters({
     [searchParams, searchInput, selectedStatus, itemsPerPage, internshipId, router]
   );
 
-  // 🚀 Debounced Live Search: টাইপ করার ৪০০ms পর স্বয়ংক্রিয়ভাবে আপডেট হবে
   useEffect(() => {
-    // initial state-এর সাথে মিল থাকলে প্রথম রেন্ডারে ট্র্রিগার থামাবে
     if (searchInput === initialSearch) return;
 
     const handler = setTimeout(() => {

@@ -91,11 +91,9 @@ export default function ApplicationsTable({
 
   return (
     <div className="space-y-4">
-      {/* Search & Filter Header */}
       {showFilters && (
         <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-3 justify-between items-center">
           
-          {/* Live Search Input (No Button Needed) */}
           <div className="relative w-full sm:w-auto flex-1 max-w-md">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
               <svg
@@ -121,7 +119,6 @@ export default function ApplicationsTable({
             />
           </div>
 
-          {/* Status Filter & Reset Button */}
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <select
               value={selectedStatus}
@@ -149,7 +146,6 @@ export default function ApplicationsTable({
         </div>
       )}
 
-      {/* Main Table Container */}
       <div
         className={`bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col transition-opacity ${
           isPending ? "opacity-50" : "opacity-100"

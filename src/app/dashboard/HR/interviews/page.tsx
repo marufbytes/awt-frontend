@@ -28,7 +28,7 @@ interface Notification {
 }
 
 const TABS = ['All', 'Upcoming', 'Completed', 'Cancelled'] as const;
-const API_BASE_URL = 'http://localhost:3000/interviews/company';
+const API_BASE_URL = 'http://localhost:3000/interviews';
 
 export default function InterviewsContent() {
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>('All');
@@ -36,26 +36,25 @@ export default function InterviewsContent() {
   const [loading, setLoading] = useState<boolean>(true);
   const [notification, setNotification] = useState<Notification | null>(null);
 
-  // Edit Modal States
   const [editingInterview, setEditingInterview] = useState<Interview | null>(null);
   const [editDate, setEditDate] = useState<string>('');
   const [editLink, setEditLink] = useState<string>('');
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
-  // Helper for Notifications
   const showToast = (message: string, type: 'success' | 'error' = 'error') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3500);
   };
 
-  // Fetch Interviews
   const fetchInterviews = async (statusFilter: string) => {
     setLoading(true);
     try {
       let filterParam = statusFilter.toLowerCase();
       if (statusFilter === 'Upcoming') filterParam = 'scheduled';
 
-      const url = statusFilter === 'All' ? API_BASE_URL : `${API_BASE_URL}?status=${filterParam}`;
+      const url = statusFilter === 'All' 
+        ? `${API_BASE_URL}/company` 
+        : `${API_BASE_URL}/company?status=${filterParam}`;
 
       const response = await fetch(url, {
         method: 'GET',
@@ -81,7 +80,6 @@ export default function InterviewsContent() {
     fetchInterviews(activeTab);
   }, [activeTab]);
 
-  // Handle Edit Click
   const handleEditClick = (interview: Interview) => {
     setEditingInterview(interview);
     const dateObj = new Date(interview.scheduledDate);
@@ -94,7 +92,6 @@ export default function InterviewsContent() {
     setEditLink(interview.meetingLink || '');
   };
 
-  // Save Edited Schedule
   const handleSaveEdit = async () => {
     if (!editingInterview) return;
     setIsUpdating(true);
@@ -130,7 +127,6 @@ export default function InterviewsContent() {
     }
   };
 
-  // Cancel Interview
   const handleCancelClick = async (id: number) => {
     try {
       const response = await fetch(`${API_BASE_URL}/${id}`, {
@@ -152,7 +148,6 @@ export default function InterviewsContent() {
     }
   };
 
-  // Helper for Status Pills Styling (Matching image design)
   const renderStatusBadge = (status: string) => {
     if (status === 'scheduled') {
       return (
@@ -177,7 +172,6 @@ export default function InterviewsContent() {
 
   return (
     <div className="w-full min-h-screen bg-white p-6 font-sans">
-      {/* Toast Notification */}
       {notification && (
         <div
           className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-xl shadow-lg text-xs font-semibold flex items-center gap-2 border transition-all ${
@@ -190,13 +184,11 @@ export default function InterviewsContent() {
         </div>
       )}
 
-      {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900">Interviews</h1>
         <p className="text-xs text-gray-500 mt-1">Manage and monitor candidate interview schedules.</p>
       </div>
 
-      {/* Filter Tabs */}
       <div className="mb-6 flex items-center">
         <div className="inline-flex bg-gray-100/80 p-1 rounded-xl gap-1">
           {TABS.map((tab) => (
@@ -215,7 +207,6 @@ export default function InterviewsContent() {
         </div>
       </div>
 
-      {/* Table Container - Custom Card Style matching Image */}
       <div className="bg-white rounded-2xl border border-gray-200/80 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -250,7 +241,6 @@ export default function InterviewsContent() {
                     ? dateObj.toISOString().split('T')[0]
                     : item.scheduledDate;
 
-                  // Dynamic Candidate Name & Internship Title Extraction
                   const candidateName =
                     item.candidateName ||
                     (item.application?.student
@@ -334,7 +324,6 @@ export default function InterviewsContent() {
         </div>
       </div>
 
-      {/* Edit Modal */}
       {editingInterview && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-gray-100">

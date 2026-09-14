@@ -14,20 +14,16 @@ export default function SettingsPage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
-  // Notification State
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Form States
   const [profile, setProfile] = useState({ firstName: "", lastName: "", email: "", phone: "" });
   const [password, setPassword] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
 
-  // Notification Helper
   const showToast = (message: string, type: "success" | "error" = "error") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Fetch Profile Data
   useEffect(() => {
     axios
       .get(`${API_BASE_URL}/users/me`)
@@ -46,7 +42,6 @@ export default function SettingsPage() {
       .finally(() => setLoading(false));
   }, [router]);
 
-  // Input Change Handlers
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
@@ -55,7 +50,6 @@ export default function SettingsPage() {
     setPassword({ ...password, [e.target.name]: e.target.value });
   };
 
-  // Update Profile
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavingProfile(true);
@@ -69,7 +63,6 @@ export default function SettingsPage() {
     }
   };
 
-  // Update Password
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.newPassword !== password.confirmPassword) {
@@ -97,7 +90,6 @@ export default function SettingsPage() {
 
   return (
     <div className="w-full min-h-screen bg-white p-6 font-sans">
-      {/* Toast Alert */}
       {toast && (
         <div
           className={`fixed top-5 right-5 z-50 px-4 py-2.5 rounded-xl text-xs font-semibold text-white shadow-lg ${
@@ -109,13 +101,11 @@ export default function SettingsPage() {
       )}
 
       <div className="max-w-3xl mx-auto space-y-8">
-        {/* Title */}
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
           <p className="text-xs text-gray-500 mt-1">Manage your account and password settings.</p>
         </div>
 
-        {/* Profile Card */}
         <div className="bg-white rounded-2xl border border-gray-200/80 p-6 space-y-6 shadow-xs">
           <div className="flex items-center justify-center gap-2 border-b border-gray-100 pb-3">
             <User className="w-4 h-4 text-gray-700" />
@@ -185,7 +175,6 @@ export default function SettingsPage() {
           </form>
         </div>
 
-        {/* Change Password Card */}
         <div className="bg-white rounded-2xl border border-gray-200/80 p-6 space-y-6 shadow-xs">
           <div className="flex items-center justify-center gap-2 border-b border-gray-100 pb-3">
             <Lock className="w-4 h-4 text-gray-700" />

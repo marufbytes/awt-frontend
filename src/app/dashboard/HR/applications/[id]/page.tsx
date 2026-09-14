@@ -4,9 +4,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 
-// API base path - Rewrites use koray /api routing backend-e proxy hoye jabe
-const API_BASE_URL = '/api';
-
 interface Student {
   id: number;
   firstName: string;
@@ -62,9 +59,7 @@ export default function ApplicationDetailPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
-  const [resumeLoading, setResumeLoading] = useState<boolean>(false);
 
-  // Modal & Form States
   const [showScheduleModal, setShowScheduleModal] = useState<boolean>(false);
   const [interviewType, setInterviewType] = useState<'online' | 'physical'>('online');
   const [scheduledDate, setScheduledDate] = useState<string>('');
@@ -97,7 +92,7 @@ export default function ApplicationDetailPage() {
 
     try {
       const response = await axios.get<Application>(
-        `${API_BASE_URL}/applications/${applicationId}`,
+        `http://localhost:3000/application/${applicationId}`,
         { withCredentials: true }
       );
       setApplication(response.data);
@@ -117,7 +112,7 @@ export default function ApplicationDetailPage() {
     setActionLoading(true);
     try {
       await axios.patch(
-        `${API_BASE_URL}/applications/${applicationId}/status`,
+        `http://localhost:3000/application/${applicationId}/status`,
         { status: newStatus },
         { withCredentials: true }
       );
@@ -154,7 +149,7 @@ export default function ApplicationDetailPage() {
           : `Physical Location: ${locationDetails.trim()}`;
 
       await axios.post(
-        `${API_BASE_URL}/interviews`,
+        `http://localhost:3000/interviews`,
         {
           applicationId: Number(applicationId),
           scheduledDate: combinedDateTime,
@@ -194,7 +189,7 @@ export default function ApplicationDetailPage() {
     setActionLoading(true);
     try {
       await axios.patch(
-        `${API_BASE_URL}/interviews/${latestInterview.id}/complete`,
+        `http://localhost:3000/interviews/${latestInterview.id}/complete`,
         { decision: finalDecision },
         { withCredentials: true }
       );
@@ -209,32 +204,25 @@ export default function ApplicationDetailPage() {
     }
   };
 
-  const handleViewResume = async (fileUrl: string) => {
-    setResumeLoading(true);
-    try {
-      const filename = fileUrl.split(/[/\\]/).pop();
-      const response = await axios.get(`${API_BASE_URL}/uploads/${filename}`, {
-        withCredentials: true,
-        responseType: 'blob',
-      });
+  const handleViewResume = (fileUrl: string) => {
+    if (!fileUrl) return;
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const blobUrl = URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
-    } catch (err: unknown) {
-      console.error('View Resume Error:', err);
-      alert(getErrorMessage(err, 'Failed to load resume. Access unauthorized or file missing.'));
-    } finally {
-      setResumeLoading(false);
+    const normalizedUrl = fileUrl.replace(/\\/g, '/');
+    const rawFilename = normalizedUrl.split('/').pop();
+    if (!rawFilename) {
+      alert('Invalid file URL');
+      return;
     }
+
+    const cleanFilename = decodeURIComponent(rawFilename);
+    const encodedFilename = encodeURIComponent(cleanFilename);
+
+    const fullUrl = `http://localhost:3000/uploads/${encodedFilename}`;
+    window.open(fullUrl, '_blank');
   };
 
   if (loading) {
-    return (
-      <div className="p-8 text-center text-gray-500 text-sm font-medium">
-        Loading details...
-      </div>
-    );
+    return <div className="p-8 text-center text-gray-500 text-sm">Loading details...</div>;
   }
 
   if (error || !application) {
@@ -242,7 +230,7 @@ export default function ApplicationDetailPage() {
       <div className="p-6 max-w-5xl mx-auto space-y-4">
         <button
           onClick={() => router.back()}
-          className="text-sm text-gray-600 hover:text-gray-900 font-medium inline-flex items-center gap-1 cursor-pointer"
+          className="text-sm text-gray-600 hover:text-gray-900 font-medium inline-flex items-center gap-1"
         >
           &larr; Back to Applications
         </button>
@@ -274,7 +262,7 @@ export default function ApplicationDetailPage() {
       <div>
         <button
           onClick={() => router.back()}
-          className="text-xs text-gray-500 hover:text-gray-800 font-medium inline-flex items-center gap-1 mb-2 cursor-pointer"
+          className="text-xs text-gray-500 hover:text-gray-800 font-medium inline-flex items-center gap-1 mb-2"
         >
           &larr; Back to Applications
         </button>
@@ -282,7 +270,6 @@ export default function ApplicationDetailPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-        {/* Left Column: Student Details */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-5">
           <div className="text-center space-y-3">
             <div className="w-20 h-20 bg-gray-100 rounded-full mx-auto flex items-center justify-center text-gray-500 font-semibold text-xl border border-gray-200">
@@ -354,11 +341,10 @@ export default function ApplicationDetailPage() {
 
           {application.resume?.fileUrl ? (
             <button
-              disabled={resumeLoading}
               onClick={() => handleViewResume(application.resume!.fileUrl)}
-              className="w-full text-center py-2.5 px-4 bg-black text-white text-sm font-medium rounded-xl hover:bg-gray-800 disabled:opacity-50 transition shadow-xs cursor-pointer"
+              className="w-full text-center py-2.5 px-4 bg-black text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition shadow-xs cursor-pointer"
             >
-              {resumeLoading ? 'Opening PDF...' : 'View Resume'}
+              View Resume
             </button>
           ) : (
             <div className="w-full text-center py-2.5 px-4 border border-dashed border-gray-200 text-xs text-gray-400 rounded-xl">
@@ -367,7 +353,6 @@ export default function ApplicationDetailPage() {
           )}
         </div>
 
-        {/* Right Column: Main Content */}
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2">
             <p className="text-gray-400 font-semibold uppercase tracking-wider text-[10px]">APPLIED INTERNSHIP</p>
@@ -379,7 +364,6 @@ export default function ApplicationDetailPage() {
             </div>
           </div>
 
-          {/* Application Progress Bar */}
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
             <div className="flex justify-between items-center">
               <p className="text-gray-400 font-semibold uppercase tracking-wider text-[10px]">APPLICATION PROGRESS</p>
@@ -428,7 +412,6 @@ export default function ApplicationDetailPage() {
             </div>
           </div>
 
-          {/* Scheduled Interview Card */}
           {latestInterview && (
             <div className="bg-gray-50/70 p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
               <p className="text-gray-500 font-semibold uppercase tracking-wider text-[10px]">INTERVIEW INFORMATION</p>
@@ -450,7 +433,6 @@ export default function ApplicationDetailPage() {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-3">
             <p className="text-gray-400 font-semibold uppercase tracking-wider text-[10px]">HR ACTIONS</p>
             <div className="flex flex-wrap gap-3">
@@ -501,7 +483,6 @@ export default function ApplicationDetailPage() {
         </div>
       </div>
 
-      {/* Schedule Interview Modal */}
       {showScheduleModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-6 rounded-2xl max-w-md w-full space-y-4 shadow-xl">
@@ -527,11 +508,23 @@ export default function ApplicationDetailPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-gray-600 font-medium mb-1">Date</label>
-                  <input type="date" required value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg text-xs" />
+                  <input
+                    type="date"
+                    required
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-black cursor-pointer [color-scheme:light] [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:brightness-0"
+                  />
                 </div>
                 <div>
                   <label className="block text-gray-600 font-medium mb-1">Time</label>
-                  <input type="time" required value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} className="w-full p-2 border border-gray-300 rounded-lg text-xs" />
+                  <input
+                    type="time"
+                    required
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-black cursor-pointer [color-scheme:light] [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:brightness-0"
+                  />
                 </div>
               </div>
 
@@ -558,7 +551,6 @@ export default function ApplicationDetailPage() {
         </div>
       )}
 
-      {/* Complete Interview Modal */}
       {showCompleteModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-6 rounded-2xl max-w-sm w-full space-y-4 shadow-xl">
@@ -600,4 +592,3 @@ export default function ApplicationDetailPage() {
     </div>
   );
 }
-
