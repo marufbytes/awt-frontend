@@ -23,20 +23,9 @@ export default function Navbar() {
 
 
 
-      <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-600">
-        <Link href="#features" className="hover:text-blue-600 transition">
-          Features
-        </Link>
-        <Link href="#students" className="hover:text-blue-600 transition">
-          For Students
-        </Link>
-        <Link href="#employers" className="hover:text-blue-600 transition">
-          For Employers
-        </Link>
-        <Link href="#alumni" className="hover:text-blue-600 transition">
-          For Alumni
-        </Link>
-      </nav>
+      <div className="hidden md:flex items-center text-3xl font-bold text-gray-700 tracking-wide">
+        InternNova
+      </div>
 
 
 

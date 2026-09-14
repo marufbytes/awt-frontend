@@ -2,18 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Download } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from "recharts";
 
 interface User {
   id: number;
@@ -24,20 +13,7 @@ interface User {
   createdAt?: string;
 }
 
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+const MONTHS = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const ROLE_COLORS: Record<string, string> = {
   STUDENT: "#0ea5e9",
@@ -47,12 +23,15 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 export default function AdminDashboardHome() {
+
   const [trendData, setTrendData] = useState<
     { month: string; users: number }[]
   >([]);
+
   const [roleData, setRoleData] = useState<
     { name: string; value: number; color: string }[]
   >([]);
+
   const [totalUsers, setTotalUsers] = useState<number>(0);
   const [totalCompanies, setTotalCompanies] = useState<number>(0);
   const [totalInternships, setTotalInternships] = useState<number>(0);
@@ -85,7 +64,7 @@ export default function AdminDashboardHome() {
             : json.users || json.data || [];
           setTotalUsers(usersList.length);
 
-          // Trend mapping
+//user graph
           const monthMap = MONTHS.reduce(
             (acc, m) => ({ ...acc, [m]: 0 }),
             {} as Record<string, number>,
@@ -100,7 +79,7 @@ export default function AdminDashboardHome() {
             MONTHS.map((month) => ({ month, users: monthMap[month] })),
           );
 
-          // Role mapping
+          // role mapping
           const roleMap: Record<string, number> = {};
           usersList.forEach((u) => {
             const r = (u.role || "OTHER").toUpperCase();
@@ -169,106 +148,89 @@ export default function AdminDashboardHome() {
             Manage the whole platform from here
           </p>
         </div>
-        <button
-          onClick={() => alert("Analytics Report Exported!")}
-          className="mt-4 md:mt-0 btn bg-white hover:bg-sky-50 text-sky-700 border-none shadow-md font-bold text-xs rounded-xl"
+</div>
+
+
+{(() => {
+  const studentCount = roleData.find((r) => r.name.toLowerCase() === "student")?.value || 0;
+  const alumniCount = roleData.find((r) => r.name.toLowerCase() === "alumni")?.value || 0;
+  const compCount = totalCompanies || 0;
+
+  const formatRatio = (numA: number, numB: number) => 
+    numA === 0 || numB === 0 ? "0 : 0" : `1 : ${Math.round(numA / numB)}`;
+
+  const stats = [
+    {
+      title: "Total Users",
+      value: loading ? "..." : totalUsers.toLocaleString(),
+      sub: "Registered accounts",
+      accent: "bg-sky-500",
+    },
+    {
+      title: "Total Companies",
+      value: loading ? "..." : totalCompanies.toLocaleString(),
+      sub: "Partner organizations",
+      accent: "bg-green-500",
+    },
+    {
+      title: "Total Internships",
+      value: loading ? "..." : totalInternships.toLocaleString(),
+      sub: "Listing posts",
+      accent: "bg-indigo-500",
+    },
+    {
+      title: "Total Applications",
+      value: loading ? "..." : totalApplications.toLocaleString(),
+      sub: "Candidate submissions",
+      accent: "bg-emerald-400",
+    },
+    {
+      title: "Company : Student Ratio",
+      value: loading ? "..." : formatRatio(studentCount, compCount),
+      sub: "Per company reach",
+      accent: "bg-cyan-400",
+    },
+    {
+      title: "Alumni : Student Ratio",
+      value: loading ? "..." : formatRatio(studentCount, alumniCount),
+      sub: "Mentor-to-peer index",
+      accent: "bg-amber-500",
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {stats.map((stat, i) => (
+        <div
+          key={i}
+          className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition relative overflow-hidden flex flex-col justify-between h-32"
         >
-          <Download className="w-4 h-4 mr-1" /> Export Analytics
-        </button>
-      </div>
-
-      {/* KPI Stat Cards (6 items: 3 per row) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {[
-          // Row 1
-          {
-            title: "Total Users",
-            value: loading ? "..." : totalUsers.toLocaleString(),
-            sub: "Registered accounts",
-            accent: "bg-sky-500",
-          },
-          {
-            title: "Total Companies",
-            value: loading ? "..." : totalCompanies.toLocaleString(),
-            sub: "Partner organizations",
-            accent: "bg-blue-500",
-          },
-          {
-            title: "Total Internships",
-            value: loading ? "..." : totalInternships.toLocaleString(),
-            sub: "Listing posts",
-            accent: "bg-indigo-500",
-          },
-
-          // Row 2
-          {
-            title: "Total Applications",
-            value: loading ? "..." : totalApplications.toLocaleString(),
-            sub: "Candidate submissions",
-            accent: "bg-emerald-400",
-          },
-          {
-            title: "Company : Student Ratio",
-            value: loading
-              ? "..."
-              : (() => {
-                  const studentCount =
-                    roleData.find((r) => r.name.toLowerCase() === "student")
-                      ?.value || 0;
-                  const compCount = totalCompanies || 0;
-                  if (compCount === 0 || studentCount === 0) return "0 : 0";
-                  const ratio = Math.round(studentCount / compCount);
-                  return `1 : ${ratio}`;
-                })(),
-            sub: "Per company reach",
-            accent: "bg-cyan-400",
-          },
-          {
-            title: "Alumni : Student Ratio",
-            value: loading
-              ? "..."
-              : (() => {
-                  const studentCount =
-                    roleData.find((r) => r.name.toLowerCase() === "student")
-                      ?.value || 0;
-                  const alumniCount =
-                    roleData.find((r) => r.name.toLowerCase() === "alumni")
-                      ?.value || 0;
-                  if (alumniCount === 0 || studentCount === 0) return "0 : 0";
-                  const ratio = Math.round(studentCount / alumniCount);
-                  return `1 : ${ratio}`;
-                })(),
-            sub: "Mentor-to-peer index",
-            accent: "bg-amber-500",
-          },
-        ].map((stat, i) => (
           <div
-            key={i}
-            className="bg-white p-5 rounded-2xl shadow-sm hover:shadow-md transition relative overflow-hidden flex flex-col justify-between h-32"
-          >
-            <div
-              className={`absolute top-0 left-0 right-0 h-1.5 ${stat.accent}`}
-            ></div>
-            <div className="flex justify-between items-start">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {stat.title}
-              </p>
-            </div>
-            <div className="flex justify-between items-baseline">
-              <h3 className="text-3xl font-black text-slate-900">
-                {stat.value}
-              </h3>
-              <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md">
-                {stat.sub}
-              </span>
-            </div>
+            className={`absolute top-0 left-0 right-0 h-1.5 ${stat.accent}`}
+          ></div>
+          <div className="flex justify-between items-start">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              {stat.title}
+            </p>
           </div>
-        ))}
-      </div>
+          <div className="flex justify-between items-baseline">
+            <h3 className="text-3xl font-black text-slate-900">
+              {stat.value}
+            </h3>
+            <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md">
+              {stat.sub}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+})()}
 
-      {/* Recharts Visualizations Grid */}
+
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Users Overview (AreaChart) */}
+
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-center mb-6">
             <div>
@@ -293,41 +255,17 @@ export default function AdminDashboardHome() {
                     <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#f1f5f9"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="month"
-                  stroke="#64748b"
-                  tick={{ fontSize: 12 }}
-                />
-                <YAxis
-                  stroke="#64748b"
-                  tick={{ fontSize: 12 }}
-                  allowDecimals={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#fff",
-                    borderRadius: "12px",
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="users"
-                  stroke="#0ea5e9"
-                  strokeWidth={3}
-                  fillOpacity={1}
-                  fill="url(#colorUsers)"
-                />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="month" stroke="#64748b" tick={{ fontSize: 12 }} />
+                <YAxis stroke="#64748b" tick={{ fontSize: 12 }} allowDecimals={false} />
+                <Tooltip contentStyle={{ backgroundColor: "#fff", borderRadius: "12px" }}/>
+                <Area type="monotone" dataKey="users" stroke="#0ea5e9" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)"/>
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Users Category / Role Breakdown (PieChart) */}
+
         <div className="bg-white p-6 rounded-3xl shadow-sm flex flex-col justify-between">
           <div>
             <h3 className="text-lg font-bold text-slate-900 mb-1">
