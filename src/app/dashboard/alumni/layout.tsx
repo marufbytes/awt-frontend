@@ -1,4 +1,3 @@
-// src/app/dashboard/alumni/layout.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -22,18 +21,13 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
 
-  // Only an ALUMNI with a valid session may see this dashboard. `getSession`
-  // reads localStorage, an external system unavailable during server
-  // rendering, so it has to happen post-mount — this is the sanctioned
-  // "subscribe to an external system on mount" use of an effect, not state
-  // derived from props/state that belongs in render.
   useEffect(() => {
     const session = getSession();
     if (!session || session.user.role !== 'ALUMNI') {
       router.replace('/auth/login');
       return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of a browser-only external store (localStorage) on mount, not state derived from render
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(session.user);
   }, [router]);
 
@@ -68,7 +62,6 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
 
   return (
     <div data-theme="light" className="min-h-screen flex bg-slate-50 text-slate-800 font-sans">
-      {/* Toast Notification */}
       {toastMessage && (
         <div className="toast toast-end z-50">
           <div className="alert alert-success text-white shadow-lg rounded-2xl">
@@ -77,10 +70,8 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
         </div>
       )}
 
-      {/* SIDEBAR */}
       <aside className="w-20 md:w-64 bg-white border-r border-slate-100 flex flex-col justify-between shadow-xs transition-all duration-300 shrink-0 sticky top-0 h-screen">
         <div>
-          {/* Brand */}
           <div className="p-5 md:p-6 flex items-center space-x-3 mb-1 overflow-hidden">
             <div className="relative w-9 h-9 shrink-0 rounded-full overflow-hidden border border-gray-200 flex items-center justify-center bg-blue-600">
               <Image src="/logo.jpg" alt="InternNova Logo" fill className="object-cover" />
@@ -91,7 +82,6 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
             </span>
           </div>
 
-          {/* Back to Home */}
           <div className="px-3 md:px-4 mb-3">
             <Link
               href="/"
@@ -102,7 +92,6 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
             </Link>
           </div>
 
-          {/* Navigation */}
           <nav className="space-y-1.5 px-3 md:px-4">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -128,7 +117,6 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
           </nav>
         </div>
 
-        {/* Logout */}
         <div className="p-3 md:p-4">
           <button
             onClick={handleLogout}
@@ -140,9 +128,7 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
         </div>
       </aside>
 
-      {/* MAIN AREA */}
       <div className="flex-grow flex flex-col h-screen overflow-y-auto">
-        {/* TOP HEADER */}
         <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-100 py-3.5 px-8 flex justify-between items-center shadow-xs">
           <h2 className="text-xl font-black text-slate-900 tracking-tight">
             {getPageTitle(pathname)}
@@ -161,7 +147,6 @@ export default function AlumniLayout({ children }: { children: React.ReactNode }
           </div>
         </header>
 
-        {/* PAGE CONTENT */}
         <main className="p-8 space-y-8 flex-grow">{children}</main>
       </div>
     </div>

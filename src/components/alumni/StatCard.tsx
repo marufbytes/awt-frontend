@@ -1,4 +1,3 @@
-// src/components/alumni/StatCard.tsx
 import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -7,7 +6,6 @@ interface StatCardProps {
   value: number | string;
   hint: string;
   icon: LucideIcon;
-  /** Tailwind classes for the icon square. Defaults to sky. */
   tone?: string;
 }
 

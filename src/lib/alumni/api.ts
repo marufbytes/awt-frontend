@@ -1,4 +1,3 @@
-// src/lib/alumni/api.ts
 import { getSession } from '@/lib/auth/session';
 import type {
   ApplicationStatus,
@@ -11,10 +10,6 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
-/**
- * Thrown when the backend rejects a request. `messages` holds every
- * validation message returned (class-validator can return several at once).
- */
 export class ApiError extends Error {
   messages: string[];
 
@@ -30,13 +25,10 @@ async function parseErrorMessages(response: Response): Promise<string[]> {
     const body = await response.json();
     if (Array.isArray(body.message)) return body.message;
     if (typeof body.message === 'string') return [body.message];
-  } catch {
-    // Response wasn't JSON — fall through to the generic message below.
-  }
+  } catch {}
   return [`Request failed with status ${response.status}`];
 }
 
-/** Calls the real NestJS backend, attaching the logged-in alumni's JWT. */
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const session = getSession();
 
@@ -56,10 +48,6 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-// The backend stores statuses lowercase (`'pending'`, `'approved'`, ...) —
-// see src/alumni/enums on the backend — but the UI works with uppercase ones.
-// These two helpers translate at the API boundary so nothing else in the app
-// has to think about casing.
 function toUiStatus<T extends string>(status: string): T {
   return status.toUpperCase() as T;
 }
@@ -67,7 +55,6 @@ function toApiStatus(status: string): string {
   return status.toLowerCase();
 }
 
-/** Shape of a bare user as embedded in alumni API responses (relations). */
 interface RawUser {
   id: number;
   firstName: string;
@@ -124,7 +111,6 @@ function toReferralPost(raw: RawReferralPost): ReferralPost {
   };
 }
 
-/** Students from the alumni's university who still need an internship. */
 export async function getUnplacedStudents(): Promise<UnplacedStudent[]> {
   const raw = await request<RawUnplacedStudent[]>('/alumni/students/unplaced');
   return raw.map((s) => ({
@@ -138,16 +124,11 @@ export async function getUnplacedStudents(): Promise<UnplacedStudent[]> {
   }));
 }
 
-/** Referral posts created by the currently logged-in alumni. */
 export async function getMyReferralPosts(): Promise<ReferralPost[]> {
   const raw = await request<RawReferralPost[]>('/alumni/posts/mine');
   return raw.map(toReferralPost);
 }
 
-/**
- * Create a new referral post. It starts life as PENDING and waits for an admin
- * to approve it. Returns the created post.
- */
 export async function createReferralPost(
   form: NewReferralPostForm,
 ): Promise<ReferralPost> {
@@ -171,16 +152,6 @@ export async function createReferralPost(
   return toReferralPost(raw);
 }
 
-/**
- * Students who applied through one of the alumni's circulars, newest first,
- * joined with the student's profile and the post they applied to.
- *
- * `GET /alumni/applications` only returns the student's name/email, not their
- * skills or resume — those live on `GET /alumni/students/unplaced`, so this
- * joins the two client-side. Note: a student who has already been ACCEPTED no
- * longer shows up in the "unplaced" list, so their skills/resume link will be
- * missing here once they're accepted.
- */
 export async function getStudentApplications(): Promise<StudentApplicationView[]> {
   const [rawApplications, unplacedStudents] = await Promise.all([
     request<RawReferralApplication[]>('/alumni/applications'),
@@ -214,16 +185,10 @@ export async function getStudentApplications(): Promise<StudentApplicationView[]
   });
 }
 
-/** How many students the alumni has accepted across all of their circulars so far. */
 export async function getAcceptedApplicationCount(): Promise<number> {
   return request<number>('/alumni/applications/accepted-count');
 }
 
-/**
- * Accept or reject a student's application. The backend refuses an ACCEPTED
- * response once that post's own `vacancies` are already filled — check with
- * `isPostFull` first and send `VACANCY_FULL_MESSAGE` instead in that case.
- */
 export async function respondToApplication(
   applicationId: number,
   decision: Extract<ApplicationStatus, 'ACCEPTED' | 'REJECTED'>,
@@ -238,14 +203,9 @@ export async function respondToApplication(
   });
 }
 
-/** Canned note sent to a student once the vacancy has already filled up. */
 export const VACANCY_FULL_MESSAGE =
   "Thanks for your interest — we've already accepted enough students for this vacancy. We'll keep your profile in mind for future openings.";
 
-/**
- * Whether a referral post has already accepted as many students as it has
- * room for (each post's own `vacancies`, not a global cap).
- */
 export function isPostFull(
   referralPostId: number,
   applications: StudentApplicationView[],

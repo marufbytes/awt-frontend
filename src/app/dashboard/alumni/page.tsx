@@ -1,4 +1,3 @@
-// src/app/dashboard/alumni/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -70,7 +69,6 @@ export default function AlumniDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome strip */}
       <div className="bg-gradient-to-r from-sky-600 via-sky-500 to-blue-600 rounded-2xl p-8 text-white shadow-lg shadow-sky-500/20">
         <h1 className="text-2xl font-black tracking-tight">Welcome back!</h1>
         <p className="text-sky-100 mt-2 text-sm max-w-2xl">
@@ -85,7 +83,6 @@ export default function AlumniDashboardPage() {
         </Link>
       </div>
 
-      {/* Four stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           label="Pending Applications"
@@ -116,7 +113,6 @@ export default function AlumniDashboardPage() {
         />
       </div>
 
-      {/* Preview of applications */}
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="flex justify-between items-center p-6 border-b border-slate-100">
           <div>

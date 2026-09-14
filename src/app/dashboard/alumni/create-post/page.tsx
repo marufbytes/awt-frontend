@@ -1,4 +1,3 @@
-// src/app/dashboard/alumni/create-post/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -96,7 +95,6 @@ export default function CreateReferralPostPage() {
         </div>
       )}
 
-      {/* Explanation banner */}
       <div className="flex gap-3 bg-sky-50 border border-sky-100 rounded-2xl p-4">
         <Info className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" />
         <p className="text-sm text-sky-800">
@@ -106,7 +104,6 @@ export default function CreateReferralPostPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm p-8 space-y-6">
-        {/* Title + Company */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
@@ -141,7 +138,6 @@ export default function CreateReferralPostPage() {
           </div>
         </div>
 
-        {/* Location + Vacancies + Deadline */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
@@ -194,7 +190,6 @@ export default function CreateReferralPostPage() {
           </div>
         </div>
 
-        {/* Skills */}
         <div>
           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
             Required Skills
@@ -213,7 +208,6 @@ export default function CreateReferralPostPage() {
           )}
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
             Description
@@ -231,7 +225,6 @@ export default function CreateReferralPostPage() {
           )}
         </div>
 
-        {/* Suggest students */}
         <div>
           <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
             Suggest Students{' '}
@@ -273,7 +266,6 @@ export default function CreateReferralPostPage() {
           </p>
         </div>
 
-        {/* Submit */}
         <div className="flex justify-end pt-2">
           <button
             type="submit"

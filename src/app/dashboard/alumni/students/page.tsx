@@ -1,4 +1,3 @@
-// src/app/dashboard/alumni/students/page.tsx
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -46,7 +45,6 @@ export default function AlumniStudentsPage() {
   const [skill, setSkill] = useState<string>('All');
   const [statusTab, setStatusTab] = useState<'ALL' | ApplicationStatus>('ALL');
 
-  /** Re-fetch applications without touching the full-page loading state. */
   const refreshApplications = () => getStudentApplications().then(setApplications);
 
   useEffect(() => {
@@ -59,9 +57,6 @@ export default function AlumniStudentsPage() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  // Each referral post has its own vacancy count, so "full" is per-post, not
-  // one global number — a post with 1 vacancy can be full while another with
-  // 5 still has room.
   const postFullness = useMemo(() => {
     const fullness: Record<number, boolean> = {};
     for (const a of applications) {
@@ -72,8 +67,6 @@ export default function AlumniStudentsPage() {
 
   const anyPostFull = Object.values(postFullness).some(Boolean);
 
-  // Looked up from the live list (rather than held as its own snapshot) so the
-  // modal reflects the latest status right after an accept/reject.
   const previewApp = applications.find((a) => a.id === previewId) ?? null;
 
   const skills = useMemo(
@@ -160,7 +153,6 @@ export default function AlumniStudentsPage() {
         </div>
       )}
 
-      {/* Vacancy full banner */}
       {anyPostFull && (
         <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4">
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
@@ -171,7 +163,6 @@ export default function AlumniStudentsPage() {
         </div>
       )}
 
-      {/* Status tabs */}
       <div className="flex gap-2 flex-wrap">
         {STATUS_TABS.map((tab) => (
           <button
@@ -195,7 +186,6 @@ export default function AlumniStudentsPage() {
         ))}
       </div>
 
-      {/* Filter bar */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm">
         <div className="flex flex-col sm:flex-row flex-wrap gap-3 w-full lg:w-auto">
           <div className="relative">
@@ -228,7 +218,6 @@ export default function AlumniStudentsPage() {
         </div>
       </div>
 
-      {/* Empty state */}
       {visibleApplications.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
           <GraduationCap className="w-12 h-12 text-slate-300 mx-auto mb-4" />
@@ -238,7 +227,6 @@ export default function AlumniStudentsPage() {
           </p>
         </div>
       ) : (
-        /* Application cards */
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {visibleApplications.map((a) => {
             const s = a.student;
@@ -313,7 +301,6 @@ export default function AlumniStudentsPage() {
                   <Eye className="w-4 h-4" /> View Full Profile
                 </button>
 
-                {/* Actions */}
                 {a.status === 'REJECTED' && (
                   <div className="mt-1">
                     <button
@@ -387,7 +374,6 @@ export default function AlumniStudentsPage() {
         </div>
       )}
 
-      {/* Student profile modal */}
       {previewApp && (
         <div
           className="fixed inset-0 z-40 bg-slate-900/40 flex items-center justify-center p-4"
@@ -488,7 +474,6 @@ export default function AlumniStudentsPage() {
                 </p>
               )}
 
-              {/* Modal actions */}
               {previewApp.status === 'REJECTED' && (
                 <button
                   onClick={() => handleAccept(previewApp.id)}

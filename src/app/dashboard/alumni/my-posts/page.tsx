@@ -1,4 +1,3 @@
-// src/app/dashboard/alumni/my-posts/page.tsx
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -47,7 +46,6 @@ export default function MyPostsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Filter tabs */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-2xl shadow-sm">
         <div className="flex gap-2 flex-wrap">
           {FILTERS.map((f) => (
