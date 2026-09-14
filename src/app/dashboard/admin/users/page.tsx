@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Trash2, Eye } from "lucide-react";
+import { Trash2, Eye, User } from "lucide-react";
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -99,7 +99,8 @@ export default function ManageUsersPage() {
                     "Unnamed";
                   return (
                     <tr key={u.id} className="hover:bg-slate-50/50">
-                      <td className="font-bold text-slate-900 text-sm">
+                      <td className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <User className="w-4 h-4 text-sky-500" />
                         {fullName}
                       </td>
                       <td className="text-sm text-slate-600">
